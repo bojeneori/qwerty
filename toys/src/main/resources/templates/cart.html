@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Корзина</title>
+</head>
+<body>
+
+<h1>Корзина</h1>
+
+<a href="/products">Назад к товарам</a>
+
+<hr>
+
+<div th:if="${items.isEmpty()}">
+    <p>Корзина пуста</p>
+</div>
+
+<div th:each="item : ${items}">
+    <p>
+        <b th:text="${item.product.name}">Название</b><br>
+    </p>
+
+    <form th:action="@{/cart/remove/{id}(id=${item.product.id})}" method="post">
+        <button type="submit">Удалить</button>
+    </form>
+
+    <hr>
+</div>
+
+<form th:action="@{/order/checkout}" method="post">
+    <button type="submit">Оформить заказ</button>
+</form>
+
+</body>
+</html>
