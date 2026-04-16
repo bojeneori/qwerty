@@ -4,10 +4,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface CartItemRepository extends JpaRepository<CartItem, String> {
+public interface CartItemRepository extends JpaRepository<CartItem, UUID> {
 
-    List<CartItem> findByCart_Id(String cartId);
+    List<CartItem> findByCart_Id(UUID cartId);
 
-    Optional<CartItem> findByCart_IdAndProduct_Id(String cartId, String productId);
+    Optional<CartItem> findByCart_IdAndProduct_Id(UUID cartId, UUID productId);
 }

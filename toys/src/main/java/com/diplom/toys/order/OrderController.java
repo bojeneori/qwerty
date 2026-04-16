@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.UUID;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/orders")
@@ -16,11 +18,13 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderRepository orderRepository;
 
-    private String getCurrentUserId() {
-        return SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName();
+    private UUID getCurrentUserId() {
+        return UUID.fromString(
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName()
+        );
     }
 
     @PostMapping("/checkout")

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "products")
@@ -12,7 +13,7 @@ import java.util.List;
 public class Product {
 
     @Id
-    private String id;
+    private UUID id;
 
     @Column(nullable = false)
     private String name;
@@ -24,7 +25,7 @@ public class Product {
     private Double price;
 
     @Column(name = "main_image")
-    private String mainImage;
+    private UUID mainImage;
 
     @Column(name = "edition_size")
     private Integer editionSize;

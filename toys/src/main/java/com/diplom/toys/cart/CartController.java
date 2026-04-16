@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.UUID;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/cart")
@@ -16,17 +18,17 @@ public class CartController {
 
     private final CartService cartService;
 
-    private String getCurrentUserId() {
-        return SecurityContextHolder
+    private UUID getCurrentUserId() {
+        return UUID.fromString(SecurityContextHolder
                 .getContext()
                 .getAuthentication()
-                .getName();
+                .getName());
     }
 
     @GetMapping
     public String cart(Model model) {
 
-        String userId = getCurrentUserId();
+        UUID userId = getCurrentUserId();
 
         model.addAttribute("items", cartService.getCartItems(userId));
         model.addAttribute("total", cartService.getCartTotal(userId));
@@ -35,7 +37,7 @@ public class CartController {
     }
 
     @PostMapping("/add/{productId}")
-    public String addToCart(@PathVariable String productId) {
+    public String addToCart(@PathVariable UUID productId) {
 
         cartService.addToCart(getCurrentUserId(), productId);
 
@@ -43,7 +45,7 @@ public class CartController {
     }
 
     @PostMapping("/remove/{productId}")
-    public String removeFromCart(@PathVariable String productId) {
+    public String removeFromCart(@PathVariable UUID productId) {
 
         cartService.removeFromCart(getCurrentUserId(), productId);
 

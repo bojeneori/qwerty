@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class CartService {
     private final ReservationService reservationService;
 
 
-    public Cart getOrCreateCart(String userId) {
+    public Cart getOrCreateCart(UUID userId) {
 
         return cartRepository.findByUser_Id(userId)
                 .orElseGet(() -> {
@@ -43,7 +44,7 @@ public class CartService {
     }
 
     @Transactional
-    public void addToCart(String userId, String productId) {
+    public void addToCart(UUID userId, UUID productId) {
 
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Товар не найден"));
@@ -76,7 +77,7 @@ public class CartService {
     }
 
     @Transactional
-    public void removeFromCart(String userId, String productId) {
+    public void removeFromCart(UUID userId, UUID productId) {
 
         Cart cart = getOrCreateCart(userId);
 
@@ -93,7 +94,7 @@ public class CartService {
     }
 
     @Transactional
-    public void clearCart(String userId) {
+    public void clearCart(UUID userId) {
         Cart cart = getOrCreateCart(userId);
 
         List<CartItem> items = cartItemRepository.findByCart_Id(cart.getId());
@@ -107,7 +108,7 @@ public class CartService {
         cartItemRepository.deleteAll(items);
     }
 
-    public double getCartTotal(String userId) {
+    public double getCartTotal(UUID userId) {
         Cart cart = getOrCreateCart(userId);
 
         List<CartItem> items = cartItemRepository.findByCart_Id(cart.getId());
@@ -118,7 +119,7 @@ public class CartService {
                 .sum();
     }
 
-    public List<CartItem> getCartItems(String userId) {
+    public List<CartItem> getCartItems(UUID userId) {
         Cart cart = getOrCreateCart(userId);
         return cartItemRepository.findByCart_Id(cart.getId());
     }

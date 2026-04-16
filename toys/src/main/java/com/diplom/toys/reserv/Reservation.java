@@ -2,6 +2,7 @@ package com.diplom.toys.reserv;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "reservations")
@@ -14,13 +15,13 @@ public class Reservation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
 
     @Column(name = "product_id", nullable = false)
-    private String productId;
+    private UUID productId;
 
     @Column(name = "user_id", nullable = false)
-    private String userId;
+    private UUID userId;
 
     @Column(name = "expires_at", nullable = false)
     private LocalDateTime expiresAt;

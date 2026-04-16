@@ -4,6 +4,8 @@ import com.diplom.toys.product.Product;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "cart_items")
 @Getter
@@ -15,7 +17,7 @@ public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "cart_id", nullable = false)
@@ -26,6 +28,6 @@ public class CartItem {
     private Product product;
 
     @Column(name = "reservation_id")
-    private String reservationId;
+    private UUID reservationId;
 
 }

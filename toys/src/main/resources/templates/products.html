@@ -1,30 +1,106 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Товары</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
 
-<h1>Список товаров</h1>
+<!-- HEADER -->
+<header class="header">
+    <div class="logo">ToyStore</div>
 
-<a href="/cart">Перейти в корзину</a>
+    <div class="nav">
+        <a href="/products">Товары</a>
+        <a href="/cart">Корзина</a>
 
-<hr>
+        <span sec:authorize="isAuthenticated()">
+    <a href="/profile">Профиль</a>
+    <a href="/logout">Выйти</a>
+</span>
 
-<div th:each="product : ${products}">
-    <p>
-        <b th:text="${product.name}">Название</b><br>
-        <b th:href="/{id}">Название</b><br>
-        Цена: <span th:text="${product.price}">0</span>
-    </p>
+        <span sec:authorize="!isAuthenticated()">
+    <a href="/login">Войти</a>
+</span>
+    </div>
+</header>
 
-    <form th:action="@{/cart/add}" method="post">
-        <input type="hidden" name="productId" th:value="${product.id}" />
-        <button type="submit">Добавить в корзину</button>
-    </form>
+<div class="container">
 
-    <hr>
+    <!-- SIDEBAR (ФИЛЬТРЫ) -->
+    <aside class="filters">
+
+        <h3>Поиск</h3>
+        <form method="get" action="/products">
+            <input type="text" name="search" placeholder="Поиск..." />
+            <button type="submit">Найти</button>
+        </form>
+
+        <h3>Фильтры</h3>
+
+        <form method="get" action="/products">
+
+            <div th:each="category : ${categories}">
+                <p><b th:text="${category.name}">Категория</b></p>
+
+                <div th:each="option : ${category.options}">
+                    <label>
+                        <input type="checkbox"
+                               name="filters"
+                               th:value="${option.id}" />
+                        <span th:text="${option.value}">Опция</span>
+                    </label>
+                </div>
+
+                <hr>
+            </div>
+
+            <button type="submit">Применить</button>
+        </form>
+
+    </aside>
+
+    <!-- PRODUCTS -->
+    <main class="products">
+
+        <div class="product-card" th:each="product : ${products}">
+
+            <a th:href="@{/products/{id}(id=${product.id})}">
+                <img th:src="@{'/images/' + ${product.mainImage}}" alt="img"/>
+            </a>
+
+            <h3 th:text="${product.name}">Название</h3>
+
+            <p th:text="${product.price} + ' ₽'">Цена</p>
+
+            <p>Осталось: <span th:text="${product.quantityInStock}"></span></p>
+
+            <!-- КНОПКИ -->
+            <div class="actions">
+
+                <!-- Добавить в корзину -->
+                <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
+                    <button type="submit">В корзину</button>
+                </form>
+
+                <!-- Резервация -->
+                <form th:action="@{/reservation/{id}(id=${product.id})}" method="post">
+                    <button type="submit">Забронировать</button>
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
 </div>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <p>© 2026 ToyStore</p>
+</footer>
 
 </body>
 </html>
