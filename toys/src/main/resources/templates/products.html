@@ -7,24 +7,8 @@
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="header">
-    <div class="logo">ToyStore</div>
-
-    <div class="nav">
-        <a href="/products">Товары</a>
-        <a href="/cart">Корзина</a>
-
-        <span sec:authorize="isAuthenticated()">
-    <a href="/profile">Профиль</a>
-    <a href="/logout">Выйти</a>
-</span>
-
-        <span sec:authorize="!isAuthenticated()">
-    <a href="/login">Войти</a>
-</span>
-    </div>
-</header>
+<!-- ВСТАВКА HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
 
 <div class="container">
 
@@ -97,10 +81,8 @@
 
 </div>
 
-<!-- FOOTER -->
-<footer class="footer">
-    <p>© 2026 ToyStore</p>
-</footer>
+<!-- ВСТАВКА FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>
 </html>

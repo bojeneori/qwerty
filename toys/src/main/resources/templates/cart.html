@@ -1,35 +1,65 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Корзина</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
 
-<h1>Корзина</h1>
+<!-- ВСТАВКА HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
 
-<a href="/products">Назад к товарам</a>
-
-<hr>
-
-<div th:if="${items.isEmpty()}">
-    <p>Корзина пуста</p>
-</div>
-
-<div th:each="item : ${items}">
-    <p>
-        <b th:text="${item.product.name}">Название</b><br>
-    </p>
-
-    <form th:action="@{/cart/remove/{id}(id=${item.product.id})}" method="post">
-        <button type="submit">Удалить</button>
-    </form>
+<div class="container">
+    <h1>Корзина</h1>
 
     <hr>
+
+    <div th:if="${groupedItems.isEmpty()}">
+        <p>Корзина пуста</p>
+    </div>
+
+    <div th:each="group : ${groupedItems}">
+        <div class="cart-item">
+            <div class="item-info">
+                <b th:text="${group.product.name}">Название</b><br>
+                <span th:text="'Цена: ' + ${group.product.price} + ' ₽'"></span>
+            </div>
+
+            <div class="quantity-controls">
+                <form th:action="@{/cart/decrease/{id}(id=${group.product.id})}" method="post" style="display: inline;">
+                    <button type="submit">-</button>
+                </form>
+
+                <span class="quantity" th:text="${group.quantity}">1</span>
+
+                <form th:action="@{/cart/increase/{id}(id=${group.product.id})}" method="post" style="display: inline;">
+                    <button type="submit">+</button>
+                </form>
+
+                <form th:action="@{/cart/remove/{id}(id=${group.product.id})}" method="post" style="display: inline;">
+                    <button type="submit" class="remove-all">Удалить все</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div th:unless="${groupedItems.isEmpty()}">
+        <strong>Итого: <span th:text="${total}">0</span> ₽</strong>
+
+        <form th:action="@{/order/checkout}" method="post" style="margin-top: 20px;">
+            <button type="submit">Оформить заказ</button>
+        </form>
+    </div>
+
+    <a href="/products">Назад к товарам</a>
+
 </div>
 
-<form th:action="@{/order/checkout}" method="post">
-    <button type="submit">Оформить заказ</button>
-</form>
+<!-- ВСТАВКА FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>
 </html>

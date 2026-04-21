@@ -25,12 +25,9 @@ public class CartService {
     private final ReservationRepository reservationRepository;
     private final ReservationService reservationService;
 
-
     public Cart getOrCreateCart(UUID userId) {
-
         return cartRepository.findByUser_Id(userId)
                 .orElseGet(() -> {
-
                     User user = new User();
                     user.setId(userId);
 
@@ -45,22 +42,22 @@ public class CartService {
 
     @Transactional
     public void addToCart(UUID userId, UUID productId) {
-
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Товар не найден"));
 
-        // проверка доступности
-        if (!reservationService.isProductAvailable(productId, product.getQuantityInStock())) {
-            throw new RuntimeException("Товар уже разобран");
-        }
-
         Cart cart = getOrCreateCart(userId);
 
-        // нельзя добавить два раза
-        cartItemRepository.findByCart_IdAndProduct_Id(cart.getId(), productId)
-                .ifPresent(item -> {
-                    throw new RuntimeException("Товар уже в корзине");
-                });
+        // считаем сколько уже таких товаров в корзине
+        List<CartItem> existingItems = cartItemRepository.findByCart_Id(cart.getId()).stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .toList();
+
+        long currentQuantity = existingItems.size();
+
+        // проверяем доступность
+        if (!reservationService.isProductAvailable(productId, (int) (product.getQuantityInStock() - currentQuantity))) {
+            throw new RuntimeException("Недостаточно товара на складе");
+        }
 
         Reservation reservation = reservationService.createReservation(productId, userId);
 
@@ -77,20 +74,47 @@ public class CartService {
     }
 
     @Transactional
-    public void removeFromCart(UUID userId, UUID productId) {
-
+    public void decreaseQuantity(UUID userId, UUID productId) {
         Cart cart = getOrCreateCart(userId);
 
-        CartItem item = cartItemRepository
-                .findByCart_IdAndProduct_Id(cart.getId(), productId)
-                .orElseThrow(() -> new RuntimeException("Товар не найден в корзине"));
+        // находим ВСЕ записи этого товара
+        List<CartItem> items = cartItemRepository.findByCart_Id(cart.getId()).stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .toList();
 
-        // удалить бронь
-        if (item.getReservationId() != null) {
-            reservationRepository.deleteById(item.getReservationId());
+        if (items.isEmpty()) {
+            throw new RuntimeException("Товар не найден в корзине");
         }
 
-        cartItemRepository.delete(item);
+        CartItem itemToRemove = items.get(0);
+
+        // удаляем бронь
+        if (itemToRemove.getReservationId() != null) {
+            reservationRepository.deleteById(itemToRemove.getReservationId());
+        }
+
+        cartItemRepository.delete(itemToRemove);
+    }
+
+    @Transactional
+    public void removeAllFromCart(UUID userId, UUID productId) {
+        Cart cart = getOrCreateCart(userId);
+
+        List<CartItem> items = cartItemRepository.findByCart_Id(cart.getId()).stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .toList();
+
+        for (CartItem item : items) {
+            if (item.getReservationId() != null) {
+                reservationRepository.deleteById(item.getReservationId());
+            }
+            cartItemRepository.delete(item);
+        }
+    }
+
+    @Transactional
+    public void removeFromCart(UUID userId, UUID productId) {
+        decreaseQuantity(userId, productId);
     }
 
     @Transactional
@@ -122,5 +146,10 @@ public class CartService {
     public List<CartItem> getCartItems(UUID userId) {
         Cart cart = getOrCreateCart(userId);
         return cartItemRepository.findByCart_Id(cart.getId());
+    }
+
+    @Transactional
+    public void increaseQuantity(UUID userId, UUID productId) {
+        addToCart(userId, productId);
     }
 }

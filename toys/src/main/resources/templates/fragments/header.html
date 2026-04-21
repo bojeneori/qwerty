@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<header th:fragment="header" class="header">
+    <div class="logo">ToyStore</div>
+
+    <div class="nav">
+        <a href="/products">Товары</a>
+        <a href="/cart">Корзина</a>
+
+        <span sec:authorize="isAuthenticated()">
+                <a href="/profile">Профиль</a>
+                <a href="/logout">Выйти</a>
+            </span>
+
+        <span sec:authorize="!isAuthenticated()">
+                <a href="/login">Войти</a>
+            </span>
+    </div>
+</header>
+</body>
+</html>

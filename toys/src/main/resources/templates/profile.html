@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль пользователя</title>
+</head>
+<body>
+<div class="container">
+    <!-- Информация о пользователе -->
+    <div class="card">
+        <div class="card-header">
+            Информация о пользователе
+        </div>
+        <div class="card-body">
+            <div class="profile-info">
+                <div class="info-item">
+                    <div class="info-label">Полное имя</div>
+                    <div class="info-value" th:text="${user.fullName}">Имя пользователя</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Email</div>
+                    <div class="info-value" th:text="${user.email}">email@example.com</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Адрес по умолчанию</div>
+                    <div class="info-value" th:text="${user.defaultAddress != null ? user.defaultAddress : 'Не указан'}">
+                        Адрес
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Город</div>
+                    <div class="info-value" th:text="${user.defaultCity != null ? user.defaultCity : 'Не указан'}">
+                        Город
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Почтовый индекс</div>
+                    <div class="info-value" th:text="${user.defaultPostalCode != null ? user.defaultPostalCode : 'Не указан'}">
+                        Индекс
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Активные бронирования -->
+    <div class="card">
+        <div class="card-header">
+            Активные бронирования
+        </div>
+        <div class="card-body">
+            <div th:if="${reservations != null and !reservations.isEmpty()}">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>ID бронирования</th>
+                        <th>ID товара</th>
+                        <th>Действительно до</th>
+                        <th>Статус</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="reservation : ${reservations}">
+                        <td th:text="${reservation.id}">ID</td>
+                        <td th:text="${reservation.productId}">Product ID</td>
+                        <td th:text="${#temporals.format(reservation.expiresAt, 'dd.MM.yyyy HH:mm')}">
+                            Дата
+                        </td>
+                        <td>
+                            <span class="status status-active">Активно</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${reservations == null or reservations.isEmpty()}" class="empty-state">
+               Нет активных бронирований
+            </div>
+        </div>
+    </div>
+
+    <!-- Корзина -->
+    <div class="card">
+        <div class="card-header">
+            Корзина
+        </div>
+        <div class="card-body">
+            <div th:if="${cart != null and cart.items != null and !cart.items.isEmpty()}">
+                <div class="cart-items">
+                    <div th:each="item : ${cart.items}" class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="cart-item-title" th:text="${item.product.name}">
+                                Название товара
+                            </div>
+                            <div class="cart-item-details">
+                                <span th:text="'ID товара: ' + ${item.product.id}"></span>
+                            </div>
+                            <div th:if="${item.reservationId != null}" class="cart-item-details" style="color: #4caf50;">
+                                Зарезервирован
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; text-align: right;">
+                    <a href="/cart" class="btn btn-primary">Перейти в корзину</a>
+                </div>
+            </div>
+            <div th:if="${cart == null or cart.items == null or cart.items.isEmpty()}" class="empty-state">
+                Корзина пуста
+            </div>
+            <div th:if="${cart != null and cart.expiresAt != null}"
+                 style="margin-top: 15px; font-size: 0.85em; color: #999; text-align: right;">
+                Корзина действительна до:
+                <span th:text="${#temporals.format(cart.expiresAt, 'dd.MM.yyyy HH:mm')}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Заказы -->
+    <div class="card">
+        <div class="card-header">
+            История заказов
+        </div>
+        <div class="card-body">
+            <div th:if="${orders != null and !orders.isEmpty()}">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>№ заказа</th>
+                        <th>Дата заказа</th>
+                        <th>Сумма</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td th:text="${order.id}">ID</td>
+                        <td th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}">
+                            Дата
+                        </td>
+                        <td th:text="${order.price} + ' ₽'">1000 ₽</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${orders == null or orders.isEmpty()}" class="empty-state">
+                У вас пока нет заказов
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

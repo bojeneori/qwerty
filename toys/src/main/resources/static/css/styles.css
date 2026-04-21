@@ -1,73 +1,376 @@
-body {
-    font-family: Arial, sans-serif;
+/* styles.css - ToyStore Theme */
+/* Light Orange & Turquoise Accents - Desktop Only */
+
+/* ---------- RESET & BASE ---------- */
+* {
     margin: 0;
-    background: #f5f5f5;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* HEADER */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #FFF8F0;
+    color: #4A3B2C;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---------- HEADER ---------- */
 .header {
+    background: linear-gradient(135deg, #FFB347 0%, #FF9F2E 100%);
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
-    padding: 15px;
-    background: #222;
-    color: white;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(255, 160, 60, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-.header a {
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
     color: white;
-    margin-left: 15px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    letter-spacing: 2px;
+}
+
+.nav a {
+    color: white;
     text-decoration: none;
+    margin-left: 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 0.5rem 0;
+    border-bottom: 2px solid transparent;
 }
 
-/* LAYOUT */
+.nav a:hover {
+    border-bottom-color: #40E0D0;
+    transform: translateY(-2px);
+}
+
+/* ---------- FOOTER ---------- */
+.footer {
+    background: #FFB347;
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: auto;
+    font-size: 0.9rem;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+
+/* ---------- MAIN LAYOUT: SIDEBAR + PRODUCTS GRID ---------- */
 .container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    flex: 1;
     display: flex;
+    gap: 2rem;
+    min-height: 500px;
 }
 
-/* FILTERS */
+/* SIDEBAR (FILTERS) - СТРОГО СЛЕВА */
 .filters {
-    width: 250px;
-    padding: 20px;
-    background: #fff;
+    width: 280px;
+    flex-shrink: 0;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    border: 1px solid #FFE0B5;
+    align-self: start;
+    position: sticky;
+    top: 90px;
 }
 
-/* PRODUCTS */
+.filters h3 {
+    color: #FF8C42;
+    margin-top: 0;
+    margin-bottom: 0.8rem;
+}
+
+.filters h3:not(:first-of-type) {
+    margin-top: 1.2rem;
+}
+
+.filters label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.6rem 0;
+    cursor: pointer;
+}
+
+.filters input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #40E0D0;
+}
+
+.filters hr {
+    margin: 1rem 0;
+    border: none;
+    height: 1px;
+    background: #FFE0B5;
+}
+
+.filters button[type="submit"] {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* MAIN CONTENT - ПРОДУКТЫ СЕТКОЙ */
 .products {
     flex: 1;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    padding: 20px;
+    gap: 1.5rem;
 }
 
+/* PRODUCT CARDS */
 .product-card {
     background: white;
-    padding: 15px;
-    border-radius: 8px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    padding: 1rem;
     text-align: center;
+    border: 1px solid #FFE0B5;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(255, 160, 60, 0.15);
+    border-color: #40E0D0;
 }
 
 .product-card img {
     width: 100%;
-    height: 150px;
+    height: 200px;
     object-fit: cover;
+    border-radius: 15px;
+    margin-bottom: 1rem;
 }
 
-/* BUTTONS */
-.actions {
-    margin-top: 10px;
+.product-card h3 {
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+    color: #FF8C42;
 }
 
-button {
-    margin: 5px;
-    padding: 8px 12px;
-    cursor: pointer;
+.product-card p {
+    color: #666;
+    margin: 0.3rem 0;
 }
 
-/* FOOTER */
-.footer {
-    text-align: center;
-    padding: 15px;
-    background: #222;
+.product-card .actions {
+    margin-top: auto;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+/* ---------- TYPOGRAPHY ---------- */
+h1, h2, h3 {
+    color: #FF8C42;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    font-size: 2.2rem;
+    border-left: 5px solid #40E0D0;
+    padding-left: 1rem;
+}
+
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, #FFB347, #40E0D0, #FFB347);
+    margin: 1.5rem 0;
+}
+
+/* ---------- BUTTONS & FORMS ---------- */
+button, .button, input[type="submit"] {
+    background: #FFB347;
     color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-decoration: none;
+}
+
+button:hover, .button:hover, input[type="submit"]:hover {
+    background: #40E0D0;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(64, 224, 208, 0.3);
+}
+
+input[type="text"], input[type="password"], input[type="email"], input[type="number"] {
+    padding: 0.6rem 1rem;
+    border: 2px solid #FFD6A5;
+    border-radius: 25px;
+    font-size: 1rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+input:focus {
+    outline: none;
+    border-color: #40E0D0;
+    box-shadow: 0 0 0 3px rgba(64, 224, 208, 0.2);
+}
+
+a {
+    color: #FF9F2E;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #40E0D0;
+    text-decoration: underline;
+}
+
+/* ---------- CART PAGE ---------- */
+.cart-item {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-left: 5px solid #FFB347;
+}
+
+.item-info b {
+    color: #FF8C42;
+    font-size: 1.1rem;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.quantity {
+    font-size: 1.2rem;
+    font-weight: bold;
+    min-width: 40px;
+    text-align: center;
+    color: #FF8C42;
+}
+
+.quantity-controls button {
+    background: #FFD6A5;
+    color: #FF8C42;
+    padding: 0.3rem 0.9rem;
+    font-size: 1.1rem;
+}
+
+.quantity-controls button:hover {
+    background: #40E0D0;
+    color: white;
+}
+
+.remove-all {
+    background: #FFB347 !important;
+    color: white !important;
+}
+
+.remove-all:hover {
+    background: #FF6B35 !important;
+}
+
+/* ---------- LOGIN PAGE ---------- */
+form:has(input[type="password"]) {
+    background: white;
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+form:has(input[type="password"]) input {
+    margin-bottom: 1rem;
+}
+
+form:has(input[type="password"]) button {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+/* ---------- ORDERS PAGE ---------- */
+div:has(> p > span) {
+    background: white;
+    padding: 1rem;
+    border-radius: 15px;
+    margin-bottom: 1rem;
+    border-left: 4px solid #40E0D0;
+}
+
+/* ---------- SUCCESS PAGE ---------- */
+body:has(h1:contains("Заказ оформлен")) {
+    text-align: center;
+}
+
+body:has(h1:contains("Заказ оформлен")) a {
+    display: inline-block;
+    margin-top: 1rem;
+    background: #40E0D0;
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 30px;
+}
+
+body:has(h1:contains("Заказ оформлен")) a:hover {
+    background: #FFB347;
+    text-decoration: none;
+}
+
+/* ---------- TURQUOISE ACCENTS ---------- */
+::selection {
+    background: #40E0D0;
+    color: white;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #FFE0B5;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #40E0D0;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #FFB347;
 }
