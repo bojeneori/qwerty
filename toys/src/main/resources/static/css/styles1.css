@@ -1,5 +1,5 @@
 /* styles.css - ToyStore Theme */
-/* Light Pink & Light Blue Accents - Desktop Only */
+/* Light Orange & Turquoise Accents - Desktop Only */
 
 /* ---------- RESET & BASE ---------- */
 * {
@@ -10,7 +10,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #FEF5F7;
+    background-color: #FFF8F0;
     color: #4A3B2C;
     line-height: 1.6;
     min-height: 100vh;
@@ -20,12 +20,12 @@ body {
 
 /* ---------- HEADER ---------- */
 .header {
-    background: linear-gradient(135deg, #F1A3B6 0%, #E88DA5 100%);
+    background: linear-gradient(135deg, #FFB347 0%, #FF9F2E 100%);
     padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 15px rgba(241, 163, 182, 0.3);
+    box-shadow: 0 4px 15px rgba(255, 160, 60, 0.3);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -50,13 +50,13 @@ body {
 }
 
 .nav a:hover {
-    border-bottom-color: #7EC8E0;
+    border-bottom-color: #40E0D0;
     transform: translateY(-2px);
 }
 
 /* ---------- FOOTER ---------- */
 .footer {
-    background: #F1A3B6;
+    background: #FFB347;
     color: white;
     text-align: center;
     padding: 1.5rem;
@@ -84,14 +84,14 @@ body {
     padding: 1.5rem;
     border-radius: 20px;
     box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    border: 1px solid #FAD5DF;
+    border: 1px solid #FFE0B5;
     align-self: start;
     position: sticky;
     top: 90px;
 }
 
 .filters h3 {
-    color: #E88DA5;
+    color: #FF8C42;
     margin-top: 0;
     margin-bottom: 0.8rem;
 }
@@ -111,14 +111,14 @@ body {
 .filters input[type="checkbox"] {
     width: 18px;
     height: 18px;
-    accent-color: #7EC8E0;
+    accent-color: #40E0D0;
 }
 
 .filters hr {
     margin: 1rem 0;
     border: none;
     height: 1px;
-    background: #FAD5DF;
+    background: #FFE0B5;
 }
 
 .filters button[type="submit"] {
@@ -143,15 +143,15 @@ body {
     transition: all 0.3s ease;
     padding: 1rem;
     text-align: center;
-    border: 1px solid #FAD5DF;
+    border: 1px solid #FFE0B5;
     display: flex;
     flex-direction: column;
 }
 
 .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(241, 163, 182, 0.15);
-    border-color: #7EC8E0;
+    box-shadow: 0 15px 35px rgba(255, 160, 60, 0.15);
+    border-color: #40E0D0;
 }
 
 .product-card img {
@@ -165,7 +165,7 @@ body {
 .product-card h3 {
     font-size: 1.2rem;
     margin: 0.5rem 0;
-    color: #E88DA5;
+    color: #FF8C42;
 }
 
 .product-card p {
@@ -183,26 +183,26 @@ body {
 
 /* ---------- TYPOGRAPHY ---------- */
 h1, h2, h3 {
-    color: #E88DA5;
+    color: #FF8C42;
     margin-bottom: 1rem;
 }
 
 h1 {
     font-size: 2.2rem;
-    border-left: 5px solid #7EC8E0;
+    border-left: 5px solid #40E0D0;
     padding-left: 1rem;
 }
 
 hr {
     border: none;
     height: 2px;
-    background: linear-gradient(to right, #F1A3B6, #7EC8E0, #F1A3B6);
+    background: linear-gradient(to right, #FFB347, #40E0D0, #FFB347);
     margin: 1.5rem 0;
 }
 
 /* ---------- BUTTONS & FORMS ---------- */
 button, .button, input[type="submit"] {
-    background: #F1A3B6;
+    background: #FFB347;
     color: white;
     border: none;
     padding: 0.6rem 1.2rem;
@@ -216,14 +216,14 @@ button, .button, input[type="submit"] {
 }
 
 button:hover, .button:hover, input[type="submit"]:hover {
-    background: #7EC8E0;
+    background: #40E0D0;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(126, 200, 224, 0.3);
+    box-shadow: 0 5px 15px rgba(64, 224, 208, 0.3);
 }
 
 input[type="text"], input[type="password"], input[type="email"], input[type="number"] {
     padding: 0.6rem 1rem;
-    border: 2px solid #FAD5DF;
+    border: 2px solid #FFD6A5;
     border-radius: 25px;
     font-size: 1rem;
     width: 100%;
@@ -233,18 +233,18 @@ input[type="text"], input[type="password"], input[type="email"], input[type="num
 
 input:focus {
     outline: none;
-    border-color: #7EC8E0;
-    box-shadow: 0 0 0 3px rgba(126, 200, 224, 0.2);
+    border-color: #40E0D0;
+    box-shadow: 0 0 0 3px rgba(64, 224, 208, 0.2);
 }
 
 a {
-    color: #E88DA5;
+    color: #FF9F2E;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 a:hover {
-    color: #7EC8E0;
+    color: #40E0D0;
     text-decoration: underline;
 }
 
@@ -260,11 +260,11 @@ a:hover {
     flex-wrap: wrap;
     gap: 1rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    border-left: 5px solid #F1A3B6;
+    border-left: 5px solid #FFB347;
 }
 
 .item-info b {
-    color: #E88DA5;
+    color: #FF8C42;
     font-size: 1.1rem;
 }
 
@@ -280,28 +280,28 @@ a:hover {
     font-weight: bold;
     min-width: 40px;
     text-align: center;
-    color: #E88DA5;
+    color: #FF8C42;
 }
 
 .quantity-controls button {
-    background: #FAD5DF;
-    color: #E88DA5;
+    background: #FFD6A5;
+    color: #FF8C42;
     padding: 0.3rem 0.9rem;
     font-size: 1.1rem;
 }
 
 .quantity-controls button:hover {
-    background: #7EC8E0;
+    background: #40E0D0;
     color: white;
 }
 
 .remove-all {
-    background: #F1A3B6 !important;
+    background: #FFB347 !important;
     color: white !important;
 }
 
 .remove-all:hover {
-    background: #E88DA5 !important;
+    background: #FF6B35 !important;
 }
 
 /* ---------- LOGIN PAGE ---------- */
@@ -330,7 +330,7 @@ div:has(> p > span) {
     padding: 1rem;
     border-radius: 15px;
     margin-bottom: 1rem;
-    border-left: 4px solid #7EC8E0;
+    border-left: 4px solid #40E0D0;
 }
 
 /* ---------- SUCCESS PAGE ---------- */
@@ -341,20 +341,20 @@ body:has(h1:contains("Заказ оформлен")) {
 body:has(h1:contains("Заказ оформлен")) a {
     display: inline-block;
     margin-top: 1rem;
-    background: #7EC8E0;
+    background: #40E0D0;
     color: white;
     padding: 0.8rem 2rem;
     border-radius: 30px;
 }
 
 body:has(h1:contains("Заказ оформлен")) a:hover {
-    background: #F1A3B6;
+    background: #FFB347;
     text-decoration: none;
 }
 
-/* ---------- LIGHT BLUE ACCENTS ---------- */
+/* ---------- TURQUOISE ACCENTS ---------- */
 ::selection {
-    background: #7EC8E0;
+    background: #40E0D0;
     color: white;
 }
 
@@ -363,16 +363,16 @@ body:has(h1:contains("Заказ оформлен")) a:hover {
 }
 
 ::-webkit-scrollbar-track {
-    background: #FAD5DF;
+    background: #FFE0B5;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #7EC8E0;
+    background: #40E0D0;
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #F1A3B6;
+    background: #FFB347;
 }
 
 /* ---------- PROFILE PAGE ---------- */
@@ -390,20 +390,20 @@ body:has(h1:contains("Заказ оформлен")) a:hover {
     border-radius: 20px;
     padding: 1.5rem;
     box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    border: 1px solid #FAD5DF;
+    border: 1px solid #FFE0B5;
     transition: all 0.3s ease;
 }
 
 .card:hover {
-    box-shadow: 0 10px 30px rgba(241, 163, 182, 0.15);
-    border-color: #7EC8E0;
+    box-shadow: 0 10px 30px rgba(255, 160, 60, 0.15);
+    border-color: #40E0D0;
 }
 
 /* заголовок карточки */
 .card-header {
     font-size: 1.3rem;
     font-weight: 600;
-    color: #E88DA5;
+    color: #FF8C42;
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -422,7 +422,7 @@ body:has(h1:contains("Заказ оформлен")) a:hover {
     display: flex;
     justify-content: space-between;
     padding: 0.5rem 0;
-    border-bottom: 1px dashed #FAD5DF;
+    border-bottom: 1px dashed #FFE0B5;
 }
 
 .profile-row:last-child {
@@ -431,7 +431,7 @@ body:has(h1:contains("Заказ оформлен")) a:hover {
 
 .profile-label {
     font-weight: 600;
-    color: #E88DA5;
+    color: #FF8C42;
 }
 
 .profile-value {
@@ -443,19 +443,19 @@ body:has(h1:contains("Заказ оформлен")) a:hover {
     padding: 1rem;
     border-radius: 15px;
     background: #FFFDF8;
-    border-left: 5px solid #F1A3B6;
+    border-left: 5px solid #FFB347;
     transition: all 0.3s ease;
 }
 
 .list-item:hover {
-    border-left-color: #7EC8E0;
+    border-left-color: #40E0D0;
     transform: translateX(5px);
 }
 
 /* заголовок товара */
 .item-title {
     font-weight: 600;
-    color: #E88DA5;
+    color: #FF8C42;
     font-size: 1.1rem;
 }
 
@@ -476,7 +476,7 @@ body:has(h1:contains("Заказ оформлен")) a:hover {
 }
 
 .badge-success {
-    background: #7EC8E0;
+    background: #40E0D0;
     color: white;
 }
 

@@ -51,7 +51,7 @@
         <div class="product-card" th:each="product : ${products}">
 
             <a th:href="@{/products/{id}(id=${product.id})}">
-                <img th:src="@{'/images/' + ${product.mainImage}}" alt="img"/>
+                <img th:src="@{'/images/' + ${product.mainImageUrl}}" alt="img"/>
             </a>
 
             <h3 th:text="${product.name}">Название</h3>

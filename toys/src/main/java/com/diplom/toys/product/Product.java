@@ -46,4 +46,11 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "category_option_id")
     )
     private List<CategoryOption> categoryOptions;
+
+    public String getMainImageUrl() {
+        if (images != null && !images.isEmpty()) {
+            return images.get(0).getImageUrl();
+        }
+        return "default.jpg";
+    }
 }
