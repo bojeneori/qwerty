@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Редактирование профиля</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<h2>Редактирование профиля</h2>
+
+
+<form th:action="@{/profile/edit}" method="post">
+
+    <label>Имя</label>
+    <input type="text" name="fullName" th:value="${user.fullName}" required/>
+
+    <label>Email</label>
+    <input type="email" name="email" th:value="${user.email}" required/>
+
+    <label>Адрес</label>
+    <input type="text" name="defaultAddress" th:value="${user.defaultAddress}"/>
+
+    <label>Город</label>
+    <input type="text" name="defaultCity" th:value="${user.defaultCity}"/>
+
+    <label>Индекс</label>
+    <input type="text" name="defaultPostalCode" th:value="${user.defaultPostalCode}"/>
+
+    <p th:if="${error}" style="color:red;">
+        <span th:text="${error}"></span>
+    </p>
+
+    <hr/>
+
+    <label>Текущий пароль (обязательно)</label>
+    <input type="password" name="currentPassword" required/>
+
+    <button type="submit">Сохранить</button>
+
+</form>
+
+</body>
+
+<!-- ВСТАВКА FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</html>

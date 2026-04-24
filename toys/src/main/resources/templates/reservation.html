@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Подтверждение бронирования</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<!-- ВСТАВКА HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+
+<div class="container" style="max-width: 600px; margin: 50px auto; text-align: center;">
+
+    <h2>Бронирование оформлено</h2>
+
+    <div class="confirmation-card">
+
+        <p><b>Товар:</b>
+            <span th:text="${product.name}"></span>
+        </p>
+
+        <p><b>Действует до:</b>
+            <span th:text="${#temporals.format(reservation.expiresAt, 'dd.MM.yyyy HH:mm')}"></span>
+        </p>
+
+    </div>
+
+    <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center;">
+
+        <!-- ОК -->
+        <a th:href="@{/profile}" class="btn btn-primary">
+            OK
+        </a>
+
+        <!-- Отмена бронирования -->
+        <form th:action="@{/profile/reservations/{id}/cancel(id=${reservation.id})}"
+              method="post">
+            <button type="submit" class="btn btn-danger">
+                Отменить
+            </button>
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</html>

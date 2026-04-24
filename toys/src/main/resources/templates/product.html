@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.name} + ' | ToyStore'">Товар | ToyStore</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<!-- ВСТАВКА HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container product-page">
+    <div style="width: 100%;">
+
+        <!-- Основной контейнер продукта -->
+        <div class="product-container" th:classappend="${product.quantityInStock == 0 ? 'out-of-stock' : ''}">
+
+            <!-- Блокер для полностью неактивного товара -->
+            <div th:if="${product.quantityInStock == 0}" class="product-blocker"></div>
+
+            <!-- Галерея изображений -->
+            <div class="product-gallery">
+                <div class="main-image"
+                     data-stock="${product.quantityInStock > 0}"
+                     onclick="if(this.getAttribute('data-stock') === 'true') openModal()">
+                    <img th:src="@{'/images/' + ${product.mainImageUrl}}"
+                         alt="Main image"
+                         id="mainImage">
+                </div>
+                <div class="thumbnail-list" id="thumbnailList">
+                    <div class="thumbnail active" th:attr="data-image=${'/images/' + product.mainImageUrl}">
+                        <img th:src="@{'/images/' + ${product.mainImageUrl}}" alt="Thumbnail 1">
+                    </div>
+                    <div th:each="image, iterStat : ${product.images}"
+                         th:if="${iterStat.index > 0}"
+                         class="thumbnail"
+                         th:attr="data-image=${'/images/' + image.imageUrl}">
+                        <img th:src="@{'/images/' + ${image.imageUrl}}" alt="Thumbnail">
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-info">
+
+                <h1 th:text="${product.name}"></h1>
+
+                <div class="product-price">
+                    <span th:text="${product.price}"></span> ₽
+                </div>
+
+                <div class="stock-status"
+                     th:classappend="${product.quantityInStock == 0 ? 'out-of-stock-status' : 'in-stock-status'}">
+                    <span th:if="${product.quantityInStock > 0}">
+                        В наличии: <span th:text="${product.quantityInStock}"></span> шт.
+                    </span>
+                    <span th:if="${product.quantityInStock == 0}">
+                        Нет в наличии
+                    </span>
+                </div>
+
+                <!-- Дополнительная информация о товаре -->
+                <div class="product-description" th:if="${product.description != null}">
+                    <h3>Описание</h3>
+                    <p th:text="${product.description}"></p>
+                </div>
+
+                <!-- Блокируем кнопки -->
+                <div class="action-buttons">
+                    <th:block th:if="${product.quantityInStock > 0}">
+                        <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
+                            <button type="submit">В корзину</button>
+                        </form>
+                        <form th:action="@{/reservation/{id}(id=${product.id})}" method="post">
+                            <button type="submit">Забронировать</button>
+                        </form>
+                    </th:block>
+
+                    <th:block th:unless="${product.quantityInStock > 0}">
+                        <button type="button" disabled class="disabled-btn">Нет в наличии</button>
+                        <button type="button" disabled class="disabled-btn">Недоступно</button>
+                    </th:block>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для увеличенного изображения -->
+<div id="imageModal" class="modal" onclick="closeModal()">
+    <span class="modal-close">&times;</span>
+    <img id="modalImage" alt="Увеличенное изображение">
+</div>
+
+<!-- ВСТАВКА FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    let currentImage = document.getElementById('mainImage');
+    let quantityInput = document.getElementById('quantity');
+    let cartQuantity = document.getElementById('cartQuantity');
+    let reserveQuantity = document.getElementById('reserveQuantity');
+
+    // Проверка, есть ли товар в наличии (получаем из data-атрибута)
+    const mainImageDiv = document.querySelector('.main-image');
+    const isInStock = mainImageDiv ? mainImageDiv.getAttribute('data-stock') === 'true' : false;
+
+    // Инициализация обработчиков для миниатюр (только если товар в наличии)
+    function initThumbnails() {
+        if (!isInStock) return; // Не активируем если товара нет
+
+        let thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach(thumb => {
+            thumb.addEventListener('click', function() {
+                let imageUrl = this.getAttribute('data-image');
+                if (imageUrl) {
+                    changeImage(this, imageUrl);
+                }
+            });
+        });
+    }
+
+    function changeImage(thumbnailElement, imageUrl) {
+        if (!isInStock) return;
+        currentImage.src = imageUrl;
+        let thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach(thumb => thumb.classList.remove('active'));
+        thumbnailElement.classList.add('active');
+    }
+
+    function openModal() {
+        if (!isInStock) {
+            showNotification('Товар временно недоступен');
+            return;
+        }
+        let modal = document.getElementById('imageModal');
+        let modalImage = document.getElementById('modalImage');
+        modalImage.src = currentImage.src;
+        modal.classList.add('active');
+    }
+
+    function closeModal() {
+        let modal = document.getElementById('imageModal');
+        modal.classList.remove('active');
+    }
+
+    function showNotification(message) {
+        let toast = document.getElementById('toastNotification');
+        if (!toast) {
+            // Создаем уведомление если его нет
+            let notification = document.createElement('div');
+            notification.id = 'toastNotification';
+            notification.className = 'toast-notification';
+            document.body.appendChild(notification);
+            toast = notification;
+        }
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Обработка отправки форм
+    document.querySelectorAll('.btn-cart, .btn-reserve').forEach(button => {
+        button.addEventListener('click', function(e) {
+            if (this.disabled || !isInStock) {
+                e.preventDefault();
+                showNotification('Товар временно недоступен');
+                return;
+            }
+
+            let message = this.classList.contains('btn-cart')
+                ? 'Товар добавлен в корзину!'
+                : 'Товар забронирован!';
+
+            setTimeout(() => showNotification(message), 100);
+        });
+    });
+
+    if (quantityInput && isInStock) {
+        quantityInput.addEventListener('change', function() {
+            let value = parseInt(this.value);
+            let min = parseInt(this.getAttribute('min')) || 1;
+            let max = parseInt(this.getAttribute('max')) || 99;
+            if (isNaN(value) || value < min) this.value = min;
+            else if (value > max) this.value = max;
+            updateQuantityFields();
+        });
+        updateQuantityFields();
+    }
+
+    function updateQuantityFields() {
+        if (!isInStock) return;
+        let quantity = quantityInput.value;
+        if (cartQuantity) cartQuantity.value = quantity;
+        if (reserveQuantity) reserveQuantity.value = quantity;
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    // Запуск инициализации после загрузки страницы
+    document.addEventListener('DOMContentLoaded', initThumbnails);
+</script>
+
+</body>
+</html>

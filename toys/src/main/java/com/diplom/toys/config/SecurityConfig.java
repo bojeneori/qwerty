@@ -20,7 +20,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/products/**", "/css/**", "/images/**").permitAll()
-                        .requestMatchers("/cart/**", "/orders/**", "/profile/**").authenticated()
+                        .requestMatchers("/cart/**", "/orders/**", "/profile/**", "/reservation/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .formLogin(login -> login

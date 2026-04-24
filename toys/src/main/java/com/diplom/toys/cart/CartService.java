@@ -22,12 +22,13 @@ public class CartService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
-    private final ReservationRepository reservationRepository;
     private final ReservationService reservationService;
 
     public Cart getOrCreateCart(UUID userId) {
+
         return cartRepository.findByUser_Id(userId)
                 .orElseGet(() -> {
+
                     User user = new User();
                     user.setId(userId);
 
@@ -40,25 +41,20 @@ public class CartService {
                 });
     }
 
+
     @Transactional
     public void addToCart(UUID userId, UUID productId) {
+
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Товар не найден"));
 
-        Cart cart = getOrCreateCart(userId);
-
-        // считаем сколько уже таких товаров в корзине
-        List<CartItem> existingItems = cartItemRepository.findByCart_Id(cart.getId()).stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
-                .toList();
-
-        long currentQuantity = existingItems.size();
-
-        // проверяем доступность
-        if (!reservationService.isProductAvailable(productId, (int) (product.getQuantityInStock() - currentQuantity))) {
-            throw new RuntimeException("Недостаточно товара на складе");
+        if (product.getQuantityInStock() <= 0) {
+            throw new RuntimeException("Товар закончился");
         }
 
+        Cart cart = getOrCreateCart(userId);
+
+        // создаём резервацию (уменьшает stock)
         Reservation reservation = reservationService.createReservation(productId, userId);
 
         CartItem item = CartItem.builder()
@@ -75,9 +71,9 @@ public class CartService {
 
     @Transactional
     public void decreaseQuantity(UUID userId, UUID productId) {
+
         Cart cart = getOrCreateCart(userId);
 
-        // находим ВСЕ записи этого товара
         List<CartItem> items = cartItemRepository.findByCart_Id(cart.getId()).stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .toList();
@@ -86,18 +82,19 @@ public class CartService {
             throw new RuntimeException("Товар не найден в корзине");
         }
 
-        CartItem itemToRemove = items.get(0);
+        CartItem item = items.get(0);
 
-        // удаляем бронь
-        if (itemToRemove.getReservationId() != null) {
-            reservationRepository.deleteById(itemToRemove.getReservationId());
+        // возвращаем stock через сервис
+        if (item.getReservationId() != null) {
+            reservationService.cancelReservation(item.getReservationId(), userId);
         }
 
-        cartItemRepository.delete(itemToRemove);
+        cartItemRepository.delete(item);
     }
 
     @Transactional
     public void removeAllFromCart(UUID userId, UUID productId) {
+
         Cart cart = getOrCreateCart(userId);
 
         List<CartItem> items = cartItemRepository.findByCart_Id(cart.getId()).stream()
@@ -105,34 +102,35 @@ public class CartService {
                 .toList();
 
         for (CartItem item : items) {
+
             if (item.getReservationId() != null) {
-                reservationRepository.deleteById(item.getReservationId());
+                reservationService.cancelReservation(item.getReservationId(), userId);
             }
+
             cartItemRepository.delete(item);
         }
     }
 
     @Transactional
-    public void removeFromCart(UUID userId, UUID productId) {
-        decreaseQuantity(userId, productId);
-    }
-
-    @Transactional
     public void clearCart(UUID userId) {
+
         Cart cart = getOrCreateCart(userId);
 
         List<CartItem> items = cartItemRepository.findByCart_Id(cart.getId());
 
         for (CartItem item : items) {
+
             if (item.getReservationId() != null) {
-                reservationRepository.deleteById(item.getReservationId());
+                reservationService.cancelReservation(item.getReservationId(), userId);
             }
         }
 
         cartItemRepository.deleteAll(items);
     }
 
+
     public double getCartTotal(UUID userId) {
+
         Cart cart = getOrCreateCart(userId);
 
         List<CartItem> items = cartItemRepository.findByCart_Id(cart.getId());
@@ -144,9 +142,12 @@ public class CartService {
     }
 
     public List<CartItem> getCartItems(UUID userId) {
+
         Cart cart = getOrCreateCart(userId);
+
         return cartItemRepository.findByCart_Id(cart.getId());
     }
+
 
     @Transactional
     public void increaseQuantity(UUID userId, UUID productId) {

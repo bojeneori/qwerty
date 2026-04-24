@@ -7,28 +7,31 @@
 </head>
 <body>
 
-<!-- ВСТАВКА HEADER -->
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="container profile-container">
 
+    <!-- Профиль -->
     <div class="card">
-        <div class="card-header">Профиль</div>
+        <div class="card-header">
+            Профиль
+        </div>
+
         <div class="card-body">
             <p><strong>Имя:</strong> <span th:text="${user.fullName}"></span></p>
             <p><strong>Email:</strong> <span th:text="${user.email}"></span></p>
-            <p><strong>Адрес:</strong>
-                <span th:text="${user.defaultAddress ?: 'Не указан'}"></span>
-            </p>
-            <p><strong>Город:</strong>
-                <span th:text="${user.defaultCity ?: 'Не указан'}"></span>
-            </p>
-            <p><strong>Индекс:</strong>
-                <span th:text="${user.defaultPostalCode ?: 'Не указан'}"></span>
-            </p>
+            <p><strong>Адрес:</strong> <span th:text="${user.defaultAddress ?: 'Не указан'}"></span></p>
+            <p><strong>Город:</strong> <span th:text="${user.defaultCity ?: 'Не указан'}"></span></p>
+            <p><strong>Индекс:</strong> <span th:text="${user.defaultPostalCode ?: 'Не указан'}"></span></p>
+            <form th:action="@{/profile/edit}" method="get" style="margin-top: 15px;">
+                <button type="submit" class="btn btn-danger">
+                    Редактировать профиль
+                </button>
+            </form>
         </div>
     </div>
 
+    <!-- Активные бронирования -->
     <div class="card">
         <div class="card-header">Активные бронирования</div>
         <div class="card-body">
@@ -47,6 +50,18 @@
 
                     <span class="badge badge-success">Зарезервировано</span>
 
+                    <form th:action="@{/profile/reservations/{id}/cancel(id=${r.id})}"
+                          method="post"
+                          style="margin-top: 15px;">
+
+                        <button type="submit"
+                                class="btn btn-danger"
+                                th:attr="data-reservation-id=${r.id}"
+                                onclick="return confirmReservationCancel(this)">
+                            Отменить бронирование
+                        </button>
+                    </form>
+
                     <hr/>
                 </div>
             </div>
@@ -58,15 +73,20 @@
         </div>
     </div>
 
-
+    <!-- Корзина -->
     <div class="card">
         <div class="card-header">Корзина</div>
         <div class="card-body">
 
             <div th:if="${cart != null and cart.items != null and !cart.items.isEmpty()}">
 
-                <div th:each="item : ${cart.items}" class="cart-item">
-                    <p><strong th:text="${item.product.name}"></strong></p>
+                <div th:each="item : ${cart.items}"
+                     class="cart-item"
+                     th:attr="data-cart-reservation-id=${item.reservationId}">
+
+                    <p>
+                        <strong th:text="${item.product.name}"></strong>
+                    </p>
 
                     <span th:if="${item.reservationId != null}"
                           style="color: green;">
@@ -77,7 +97,9 @@
                 </div>
 
                 <div style="text-align: right;">
-                    <a href="/cart" class="btn btn-primary">Открыть корзину</a>
+                    <a href="/cart" class="btn btn-primary">
+                        Открыть корзину
+                    </a>
                 </div>
 
                 <p style="font-size: 0.9em; color: gray; text-align: right;">
@@ -94,7 +116,7 @@
         </div>
     </div>
 
-
+    <!-- История заказов -->
     <div class="card">
         <div class="card-header">История заказов</div>
         <div class="card-body">
@@ -127,8 +149,32 @@
 
 </div>
 
-<!-- ВСТАВКА FOOTER -->
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    function confirmReservationCancel(button) {
+        const reservationId = button.getAttribute('data-reservation-id');
+
+        const cartItems = document.querySelectorAll('[data-cart-reservation-id]');
+        let inCart = false;
+
+        cartItems.forEach(item => {
+            if (item.getAttribute('data-cart-reservation-id') === reservationId) {
+                inCart = true;
+            }
+        });
+
+        if (inCart) {
+            return confirm(
+                'Вы уверены? Это удалит товар из вашей корзины.'
+            );
+        }
+
+        return confirm(
+            'Вы уверены, что хотите отменить бронирование?'
+        );
+    }
+</script>
 
 </body>
 </html>

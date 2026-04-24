@@ -48,31 +48,42 @@
     <!-- PRODUCTS -->
     <main class="products">
 
-        <div class="product-card" th:each="product : ${products}">
+        <div th:each="product : ${products}"
+             class="product-card"
+             th:classappend="${product.quantityInStock == 0 ? ' out-of-stock' : ''}">
 
-            <a th:href="@{/products/{id}(id=${product.id})}">
-                <img th:src="@{'/images/' + ${product.mainImageUrl}}" alt="img"/>
+            <!-- ВСЯ КАРТОЧКА ВНУТРИ -->
+
+            <a th:href="@{/product/{id}(id=${product.id})}"
+               class="product-link">
+                <img th:src="@{'/images/' + ${product.mainImageUrl}}" />
             </a>
 
-            <h3 th:text="${product.name}">Название</h3>
+            <h3 th:text="${product.name}"></h3>
 
-            <p th:text="${product.price} + ' ₽'">Цена</p>
+            <p th:text="${product.price} + ' ₽'"></p>
 
             <p>Осталось: <span th:text="${product.quantityInStock}"></span></p>
 
-            <!-- КНОПКИ -->
+            <div class="out-stock-badge"
+                 th:if="${product.quantityInStock == 0}">
+                Нет в наличии
+            </div>
+
             <div class="actions">
+                <th:block th:if="${product.quantityInStock > 0}">
+                    <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
+                        <button type="submit">В корзину</button>
+                    </form>
+                    <form th:action="@{/reservation/{id}(id=${product.id})}" method="post">
+                        <button type="submit">Забронировать</button>
+                    </form>
+                </th:block>
 
-                <!-- Добавить в корзину -->
-                <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
-                    <button type="submit">В корзину</button>
-                </form>
-
-                <!-- Резервация -->
-                <form th:action="@{/reservation/{id}(id=${product.id})}" method="post">
-                    <button type="submit">Забронировать</button>
-                </form>
-
+                <th:block th:unless="${product.quantityInStock > 0}">
+                    <button type="button" disabled class="disabled-btn">Нет в наличии</button>
+                    <button type="button" disabled class="disabled-btn">Недоступно</button>
+                </th:block>
             </div>
 
         </div>
