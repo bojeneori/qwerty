@@ -9,10 +9,13 @@
 
 <div th:replace="~{fragments/header :: header}"></div>
 
-<h2>Редактирование профиля</h2>
-
-
 <form th:action="@{/profile/edit}" method="post">
+
+    <h2>Редактирование профиля</h2>
+
+    <p th:if="${error}" style="color:red;">
+        <span th:text="${error}"></span>
+    </p>
 
     <label>Имя</label>
     <input type="text" name="fullName" th:value="${user.fullName}" required/>
@@ -29,9 +32,6 @@
     <label>Индекс</label>
     <input type="text" name="defaultPostalCode" th:value="${user.defaultPostalCode}"/>
 
-    <p th:if="${error}" style="color:red;">
-        <span th:text="${error}"></span>
-    </p>
 
     <hr/>
 

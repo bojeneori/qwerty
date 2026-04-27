@@ -15,13 +15,10 @@
 <div class="container product-page">
     <div style="width: 100%;">
 
-        <!-- Основной контейнер продукта -->
         <div class="product-container" th:classappend="${product.quantityInStock == 0 ? 'out-of-stock' : ''}">
 
-            <!-- Блокер для полностью неактивного товара -->
             <div th:if="${product.quantityInStock == 0}" class="product-blocker"></div>
 
-            <!-- Галерея изображений -->
             <div class="product-gallery">
                 <div class="main-image"
                      data-stock="${product.quantityInStock > 0}"
@@ -67,7 +64,7 @@
                     <p th:text="${product.description}"></p>
                 </div>
 
-                <!-- Блокируем кнопки -->
+                <hr/>
                 <div class="action-buttons">
                     <th:block th:if="${product.quantityInStock > 0}">
                         <form th:action="@{/cart/add/{id}(id=${product.id})}" method="post">
@@ -89,7 +86,7 @@
     </div>
 </div>
 
-<!-- Модальное окно для увеличенного изображения -->
+
 <div id="imageModal" class="modal" onclick="closeModal()">
     <span class="modal-close">&times;</span>
     <img id="modalImage" alt="Увеличенное изображение">

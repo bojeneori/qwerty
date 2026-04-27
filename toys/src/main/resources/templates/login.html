@@ -9,13 +9,22 @@
 <!-- ВСТАВКА HEADER -->
 <div th:replace="~{fragments/header :: header}"></div>
 
-<h2>Добро пожаловать</h2>
 
 <form th:action="@{/login}" method="post">
+    <h2>Добро пожаловать</h2>
+
     <input type="text" name="username" placeholder="Email"/>
     <input type="password" name="password" placeholder="Пароль"/>
     <button type="submit">Войти</button>
+
+    <hr/>
+
+    <p>
+        Нет аккаунта?
+        <a th:href="@{/register}">Зарегистрироваться</a>
+    </p>
 </form>
+
 
 </body>
 

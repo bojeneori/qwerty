@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
 
@@ -55,14 +56,26 @@ public class CartController {
     }
 
     @PostMapping("/add/{productId}")
-    public String addToCart(@PathVariable UUID productId) {
-        cartService.addToCart(getCurrentUserId(), productId);
+    public String addToCart(@PathVariable UUID productId,
+                            RedirectAttributes redirectAttributes) {
+        try {
+            cartService.addToCart(getCurrentUserId(), productId);
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
         return "redirect:/cart";
     }
 
     @PostMapping("/increase/{productId}")
-    public String increaseQuantity(@PathVariable UUID productId) {
-        cartService.increaseQuantity(getCurrentUserId(), productId);
+    public String increaseQuantity(@PathVariable UUID productId,
+                                   RedirectAttributes redirectAttributes) {
+        try {
+            cartService.increaseQuantity(getCurrentUserId(), productId);
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
         return "redirect:/cart";
     }
 

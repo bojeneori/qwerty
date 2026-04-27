@@ -23,6 +23,9 @@
             <p><strong>Адрес:</strong> <span th:text="${user.defaultAddress ?: 'Не указан'}"></span></p>
             <p><strong>Город:</strong> <span th:text="${user.defaultCity ?: 'Не указан'}"></span></p>
             <p><strong>Индекс:</strong> <span th:text="${user.defaultPostalCode ?: 'Не указан'}"></span></p>
+
+            <hr/>
+
             <form th:action="@{/profile/edit}" method="get" style="margin-top: 15px;">
                 <button type="submit" class="btn btn-danger">
                     Редактировать профиль
@@ -93,8 +96,9 @@
                         Зарезервирован
                     </span>
 
-                    <hr/>
                 </div>
+
+                <hr/>
 
                 <div style="text-align: right;">
                     <a href="/cart" class="btn btn-primary">

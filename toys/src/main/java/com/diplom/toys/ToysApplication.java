@@ -15,4 +15,5 @@ public class ToysApplication {
 //user1@email.ru | user
 //user2@email.ru | user
 //user3@email.ru | user
+//user4@email.ru | user
 //admin@toys.ru | admin

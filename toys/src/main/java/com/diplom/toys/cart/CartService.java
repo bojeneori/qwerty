@@ -153,4 +153,22 @@ public class CartService {
     public void increaseQuantity(UUID userId, UUID productId) {
         addToCart(userId, productId);
     }
+
+    @Transactional
+    public void removeExpiredCarts() {
+        List<Cart> expiredCarts = cartRepository.findByExpiresAtBefore(LocalDateTime.now());
+
+        for (Cart cart : expiredCarts) {
+            List<CartItem> items = cartItemRepository.findByCart_Id(cart.getId());
+
+            for (CartItem item : items) {
+                if (item.getReservationId() != null) {
+                    reservationService.cancelReservation(item.getReservationId(), cart.getUser().getId());
+                }
+            }
+
+            cartItemRepository.deleteAll(items);
+            cartRepository.delete(cart);
+        }
+    }
 }
