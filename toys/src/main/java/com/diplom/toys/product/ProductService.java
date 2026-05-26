@@ -18,37 +18,6 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException("Товар не найден"));
     }
 
-    public boolean isAvailable(Product product) {
-        return product.getQuantityInStock() > 0;
-    }
-
-    @Transactional
-    public void decreaseStock(Product product, int quantity) {
-
-        if (product.getQuantityInStock() < quantity) {
-            throw new RuntimeException("Недостаточно товара на складе");
-        }
-
-        product.setQuantityInStock(
-                product.getQuantityInStock() - quantity
-        );
-
-        productRepository.save(product);
-    }
-
-    public List<Product> getAll() {
-        return productRepository.findAll();
-    }
-
-    @Transactional
-    public void increaseStock(Product product, int quantity) {
-        product.setQuantityInStock(
-                product.getQuantityInStock() + quantity
-        );
-
-        productRepository.save(product);
-    }
-
     public List<Product> findProducts(String search, List<UUID> filters) {
 
         List<Product> products;

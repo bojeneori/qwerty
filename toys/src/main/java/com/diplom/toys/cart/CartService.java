@@ -111,24 +111,6 @@ public class CartService {
         }
     }
 
-    @Transactional
-    public void clearCart(UUID userId) {
-
-        Cart cart = getOrCreateCart(userId);
-
-        List<CartItem> items = cartItemRepository.findByCart_Id(cart.getId());
-
-        for (CartItem item : items) {
-
-            if (item.getReservationId() != null) {
-                reservationService.cancelReservation(item.getReservationId(), userId);
-            }
-        }
-
-        cartItemRepository.deleteAll(items);
-    }
-
-
     public double getCartTotal(UUID userId) {
 
         Cart cart = getOrCreateCart(userId);
@@ -147,7 +129,6 @@ public class CartService {
 
         return cartItemRepository.findByCart_Id(cart.getId());
     }
-
 
     @Transactional
     public void increaseQuantity(UUID userId, UUID productId) {

@@ -1,5 +1,6 @@
 package com.diplom.toys.order;
 
+import com.diplom.toys.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -18,13 +19,17 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderRepository orderRepository;
 
+    private final UserRepository userRepository;
     private UUID getCurrentUserId() {
-        return UUID.fromString(
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication()
-                        .getName()
-        );
+
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"))
+                .getId();
     }
 
     @PostMapping("/checkout")

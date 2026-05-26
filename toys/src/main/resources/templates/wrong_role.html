@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Вход</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<!-- ВСТАВКА HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<form>
+    <h2>Доступ запрещён</h2>
+
+    <p>
+        Вы авторизованы как администратор.<br>
+        Эта функция доступна только пользователям.
+    </p>
+    <hr/>
+    <a href="/logout">Выйти и войти как пользователь</a>
+</form>
+
+</body>
+
+<!-- ВСТАВКА FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</html>

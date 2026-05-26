@@ -30,15 +30,21 @@ public class UserController {
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
     private final ReservationRepository reservationRepository;
-    private final UserRepository userRepository;
     private final CartItemRepository cartItemRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ReservationService reservationService;
 
+    private final UserRepository userRepository;
     private UUID getCurrentUserId() {
-        return UUID.fromString(SecurityContextHolder
+
+        String email = SecurityContextHolder
                 .getContext()
                 .getAuthentication()
-                .getName());
+                .getName();
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"))
+                .getId();
     }
 
     @GetMapping
@@ -80,11 +86,11 @@ public class UserController {
             throw new AccessDeniedException("Доступ запрещён");
         }
 
-        // Удаляем все позиции корзины, связанные с этим бронированием
+        // сначала удалить item из корзины
         cartItemRepository.deleteByReservationId(reservationId);
 
-        // Затем удаляем бронирование
-        reservationRepository.delete(reservation);
+        // затем отменить бронь через сервис
+        reservationService.cancelReservation(reservationId, userId);
 
         return "redirect:/profile";
     }

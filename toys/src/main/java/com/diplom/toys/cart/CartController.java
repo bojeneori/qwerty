@@ -1,5 +1,6 @@
 package com.diplom.toys.cart;
 
+import com.diplom.toys.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -19,11 +20,17 @@ public class CartController {
 
     private final CartService cartService;
 
+    private final UserRepository userRepository;
     private UUID getCurrentUserId() {
-        return UUID.fromString(SecurityContextHolder
+
+        String email = SecurityContextHolder
                 .getContext()
                 .getAuthentication()
-                .getName());
+                .getName();
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"))
+                .getId();
     }
 
     @GetMapping

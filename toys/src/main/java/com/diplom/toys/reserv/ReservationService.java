@@ -18,10 +18,6 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final ProductRepository productRepository;
 
-    public boolean isAvailable(Product product) {
-        return product.getQuantityInStock() > 0;
-    }
-
     @Transactional
     public Reservation createReservation(UUID productId, UUID userId) {
 
@@ -31,16 +27,15 @@ public class ReservationService {
         if (product.getQuantityInStock() <= 0) {
             throw new RuntimeException("Товар закончился");
         }
-
-        // уменьшить склад
-        product.setQuantityInStock(product.getQuantityInStock() - 1);
-        productRepository.save(product);
-
+        System.out.println(product.getQuantityInStock());
+        product.setQuantityInStock(
+                product.getQuantityInStock() - 1
+        );
+        System.out.println(product.getQuantityInStock());
         Reservation reservation = Reservation.builder()
-                .productId(productId)
                 .product(product)
                 .userId(userId)
-                .expiresAt(LocalDateTime.now().plusDays(1)) // <----------------- время сутки
+                .expiresAt(LocalDateTime.now().plusDays(1))
                 .build();
 
         return reservationRepository.save(reservation);
@@ -54,10 +49,12 @@ public class ReservationService {
 
         for (Reservation r : expired) {
 
-            Product product = productRepository.findById(r.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Product not found"));
-
+            Product product = productRepository.findById(
+                    r.getProduct().getId()
+            ).orElseThrow();
+            System.out.println(product.getQuantityInStock());
             product.setQuantityInStock(product.getQuantityInStock() + 1);
+            System.out.println(product.getQuantityInStock());
             productRepository.save(product);
         }
 
@@ -74,10 +71,14 @@ public class ReservationService {
             throw new AccessDeniedException("Access denied");
         }
 
-        Product product = productRepository.findById(reservation.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+        Product product = productRepository.findById(
+                reservation.getProduct().getId()
+        ).orElseThrow(() -> new RuntimeException("Product not found"));
 
-        product.setQuantityInStock(product.getQuantityInStock() + 1);
+        product.setQuantityInStock(
+                product.getQuantityInStock() + 1
+        );
+
         productRepository.save(product);
 
         reservationRepository.delete(reservation);
