@@ -17,9 +17,6 @@ public class Category {
     @Column(nullable = false)
     private String name;
 
-    @Column(unique = true, nullable = false)
-    private String slug;
-
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<CategoryOption> options;
 }

@@ -21,21 +21,24 @@
 
             <div class="product-gallery">
                 <div class="main-image"
-                     data-stock="${product.quantityInStock > 0}"
+                     th:data-stock="${product.quantityInStock > 0}"
                      onclick="if(this.getAttribute('data-stock') === 'true') openModal()">
-                    <img th:src="@{'/images/' + ${product.mainImageUrl}}"
+                    <img th:src="${product.mainImageUrl}"
                          alt="Main image"
-                         id="mainImage">
+                         id="mainImage"
+                         onerror="this.src='https://via.placeholder.com/600x600?text=No+Image'">
                 </div>
                 <div class="thumbnail-list" id="thumbnailList">
-                    <div class="thumbnail active" th:attr="data-image=${'/images/' + product.mainImageUrl}">
-                        <img th:src="@{'/images/' + ${product.mainImageUrl}}" alt="Thumbnail 1">
+                    <div class="thumbnail active" th:attr="data-image=${product.mainImageUrl}">
+                        <img th:src="${product.mainImageUrl}"
+                             alt="Thumbnail 1"
+                             onerror="this.src='https://via.placeholder.com/100x100?text=No+Image'">
                     </div>
-                    <div th:each="image, iterStat : ${product.images}"
-                         th:if="${iterStat.index > 0}"
+                    <div th:each="image : ${product.images}"
+                         th:if="${image.id != product.mainImage}"
                          class="thumbnail"
-                         th:attr="data-image=${'/images/' + image.imageUrl}">
-                        <img th:src="@{'/images/' + ${image.imageUrl}}" alt="Thumbnail">
+                         th:attr="data-image=${image.imageUrl}">
+                        <img th:src="${image.imageUrl}">
                     </div>
                 </div>
             </div>
@@ -58,7 +61,6 @@
                     </span>
                 </div>
 
-                <!-- Дополнительная информация о товаре -->
                 <div class="product-description" th:if="${product.description != null}">
                     <h3>Описание</h3>
                     <p th:text="${product.description}"></p>
@@ -86,7 +88,6 @@
     </div>
 </div>
 
-
 <div id="imageModal" class="modal" onclick="closeModal()">
     <span class="modal-close">&times;</span>
     <img id="modalImage" alt="Увеличенное изображение">
@@ -96,33 +97,49 @@
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <script>
-    let currentImage = document.getElementById('mainImage');
-    let quantityInput = document.getElementById('quantity');
-    let cartQuantity = document.getElementById('cartQuantity');
-    let reserveQuantity = document.getElementById('reserveQuantity');
+    // Глобальные переменные
+    let currentImage = null;
+    let quantityInput = null;
+    let cartQuantity = null;
+    let reserveQuantity = null;
+    let isInStock = false;
 
-    // Проверка, есть ли товар в наличии (получаем из data-атрибута)
-    const mainImageDiv = document.querySelector('.main-image');
-    const isInStock = mainImageDiv ? mainImageDiv.getAttribute('data-stock') === 'true' : false;
-
-    // Инициализация обработчиков для миниатюр (только если товар в наличии)
     function initThumbnails() {
-        if (!isInStock) return; // Не активируем если товара нет
+        // Находим элементы после полной загрузки страницы
+        currentImage = document.getElementById('mainImage');
+        quantityInput = document.getElementById('quantity');
+        cartQuantity = document.getElementById('cartQuantity');
+        reserveQuantity = document.getElementById('reserveQuantity');
 
+        const mainImageDiv = document.querySelector('.main-image');
+        isInStock = mainImageDiv ? mainImageDiv.getAttribute('data-stock') === 'true' : false;
+
+        if (!isInStock) return;
+
+        // Находим все миниатюры и добавляем обработчики
         let thumbnails = document.querySelectorAll('.thumbnail');
-        thumbnails.forEach(thumb => {
-            thumb.addEventListener('click', function() {
-                let imageUrl = this.getAttribute('data-image');
-                if (imageUrl) {
-                    changeImage(this, imageUrl);
-                }
-            });
+        console.log('Найдено миниатюр:', thumbnails.length); // Для отладки
+
+        thumbnails.forEach((thumb, index) => {
+            // Удаляем старые обработчики, если есть
+            thumb.removeEventListener('click', thumbClickHandler);
+            // Добавляем новый обработчик
+            thumb.addEventListener('click', thumbClickHandler);
         });
     }
 
+    // Отдельная функция-обработчик для клика по миниатюре
+    function thumbClickHandler() {
+        let imageUrl = this.getAttribute('data-image');
+        if (imageUrl && isInStock) {
+            changeImage(this, imageUrl);
+        }
+    }
+
     function changeImage(thumbnailElement, imageUrl) {
-        if (!isInStock) return;
+        if (!isInStock || !currentImage) return;
         currentImage.src = imageUrl;
+
         let thumbnails = document.querySelectorAll('.thumbnail');
         thumbnails.forEach(thumb => thumb.classList.remove('active'));
         thumbnailElement.classList.add('active');
@@ -133,6 +150,8 @@
             showNotification('Товар временно недоступен');
             return;
         }
+        if (!currentImage) return;
+
         let modal = document.getElementById('imageModal');
         let modalImage = document.getElementById('modalImage');
         modalImage.src = currentImage.src;
@@ -141,13 +160,14 @@
 
     function closeModal() {
         let modal = document.getElementById('imageModal');
-        modal.classList.remove('active');
+        if (modal) {
+            modal.classList.remove('active');
+        }
     }
 
     function showNotification(message) {
         let toast = document.getElementById('toastNotification');
         if (!toast) {
-            // Создаем уведомление если его нет
             let notification = document.createElement('div');
             notification.id = 'toastNotification';
             notification.className = 'toast-notification';
@@ -159,48 +179,58 @@
         setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
-    // Обработка отправки форм
-    document.querySelectorAll('.btn-cart, .btn-reserve').forEach(button => {
-        button.addEventListener('click', function(e) {
-            if (this.disabled || !isInStock) {
-                e.preventDefault();
-                showNotification('Товар временно недоступен');
-                return;
-            }
-
-            let message = this.classList.contains('btn-cart')
-                ? 'Товар добавлен в корзину!'
-                : 'Товар забронирован!';
-
-            setTimeout(() => showNotification(message), 100);
-        });
-    });
-
-    if (quantityInput && isInStock) {
-        quantityInput.addEventListener('change', function() {
-            let value = parseInt(this.value);
-            let min = parseInt(this.getAttribute('min')) || 1;
-            let max = parseInt(this.getAttribute('max')) || 99;
-            if (isNaN(value) || value < min) this.value = min;
-            else if (value > max) this.value = max;
-            updateQuantityFields();
-        });
-        updateQuantityFields();
-    }
-
     function updateQuantityFields() {
-        if (!isInStock) return;
+        if (!isInStock || !quantityInput) return;
         let quantity = quantityInput.value;
         if (cartQuantity) cartQuantity.value = quantity;
         if (reserveQuantity) reserveQuantity.value = quantity;
     }
 
+    // Инициализация при полной загрузке DOM
+    document.addEventListener('DOMContentLoaded', function() {
+        initThumbnails();
+
+        // Обработчики для кнопок корзины/бронирования
+        document.querySelectorAll('.btn-cart, .btn-reserve').forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (this.disabled || !isInStock) {
+                    e.preventDefault();
+                    showNotification('Товар временно недоступен');
+                    return;
+                }
+
+                let message = this.classList.contains('btn-cart')
+                    ? 'Товар добавлен в корзину!'
+                    : 'Товар забронирован!';
+
+                setTimeout(() => showNotification(message), 100);
+            });
+        });
+
+        // Обработчик для количества
+        if (quantityInput && isInStock) {
+            quantityInput.addEventListener('change', function() {
+                let value = parseInt(this.value);
+                let min = parseInt(this.getAttribute('min')) || 1;
+                let max = parseInt(this.getAttribute('max')) || 99;
+                if (isNaN(value) || value < min) this.value = min;
+                else if (value > max) this.value = max;
+                updateQuantityFields();
+            });
+            updateQuantityFields();
+        }
+    });
+
+    // Обработчик клавиши Escape
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') closeModal();
     });
 
-    // Запуск инициализации после загрузки страницы
-    document.addEventListener('DOMContentLoaded', initThumbnails);
+    // Дополнительная инициализация для динамически загружаемого контента
+    window.addEventListener('load', function() {
+        // Повторная инициализация на случай, если DOMContentLoaded сработал слишком рано
+        initThumbnails();
+    });
 </script>
 
 </body>

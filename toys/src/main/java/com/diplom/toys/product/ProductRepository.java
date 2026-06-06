@@ -1,10 +1,12 @@
 package com.diplom.toys.product;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface ProductRepository extends JpaRepository<Product, UUID> {
@@ -24,4 +26,8 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     List<Product> findByIsActiveTrue();
 
     List<Product> findByIsActiveTrueAndQuantityInStockGreaterThan(int stock);
+
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.images WHERE p.id = :id")
+    Optional<Product> findByIdWithImages(@Param("id") UUID id);
+
 }

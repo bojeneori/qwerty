@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование товара</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        /* Улучшенная админ-карточка */
+        .admin-card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            border: 1px solid #FAD5DF;
+            transition: all 0.3s ease;
+        }
+        .admin-card:hover {
+            box-shadow: 0 10px 30px rgba(241, 163, 182, 0.15);
+            border-color: #7EC8E0;
+        }
+
+        /* Двухколоночная сетка для формы */
+        .form-two-columns {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        .form-full-width {
+            grid-column: span 2;
+        }
+
+        /* Стилизованные поля ввода */
+        .admin-card input[type="text"],
+        .admin-card input[type="number"],
+        .admin-card textarea,
+        .admin-card select {
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            border: 2px solid #FAD5DF;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            background: white;
+            width: 100%;
+        }
+        .admin-card input:focus,
+        .admin-card textarea:focus,
+        .admin-card select:focus {
+            border-color: #7EC8E0;
+            box-shadow: 0 0 0 3px rgba(126,200,224,0.2);
+            outline: none;
+        }
+
+        /* Чекбокс-группа */
+        .checkbox-group-modern {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.8rem 0;
+        }
+        .checkbox-group-modern input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #7EC8E0;
+            cursor: pointer;
+        }
+        .checkbox-group-modern label {
+            cursor: pointer;
+            margin: 0;
+        }
+
+        /* Категории - стильные карточки */
+        .categories-modern {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            background: #FEF5F7;
+            padding: 1.25rem;
+            border-radius: 20px;
+            border: 1px solid #FAD5DF;
+        }
+        .category-item-modern {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: white;
+            border: 1px solid #FAD5DF;
+        }
+        .category-item-modern:hover {
+            border-color: #7EC8E0;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(126,200,224,0.1);
+        }
+        .category-item-modern input {
+            width: 18px;
+            height: 18px;
+            accent-color: #7EC8E0;
+            cursor: pointer;
+        }
+        .category-item-modern label {
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #4A3B2C;
+            flex: 1;
+        }
+        .category-badge {
+            background: #FAD5DF;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #E88DA5;
+        }
+
+        /* URL-строки */
+        .urls-modern {
+            background: #FEF5F7;
+            border-radius: 20px;
+            border: 1px solid #FAD5DF;
+            padding: 1.25rem;
+        }
+        .url-row-modern {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            align-items: center;
+        }
+        .url-row-modern input {
+            flex: 1;
+        }
+        .btn-remove-url {
+            background: white;
+            border: 2px solid #FAD5DF;
+            color: #E88DA5;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+        .btn-remove-url:hover {
+            background: #E88DA5;
+            color: white;
+            border-color: #E88DA5;
+        }
+        .btn-add-url {
+            width: 100%;
+            margin-top: 0.75rem;
+            background: white;
+            border: 2px dashed #FAD5DF;
+            color: #E88DA5;
+            padding: 0.7rem;
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-add-url:hover {
+            border-color: #7EC8E0;
+            background: #FEF5F7;
+            transform: translateY(-2px);
+        }
+
+        /* Превью грид */
+        .preview-modern-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .preview-modern-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid #FAD5DF;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .preview-modern-card:hover {
+            border-color: #7EC8E0;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(241,163,182,0.15);
+        }
+        .preview-modern-card img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+        }
+        .preview-radio-modern {
+            padding: 0.6rem;
+            text-align: center;
+            background: #FEF5F7;
+            border-top: 1px solid #FAD5DF;
+        }
+        .preview-radio-modern label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: #E88DA5;
+            font-weight: 500;
+        }
+        .preview-radio-modern input {
+            width: 16px;
+            height: 16px;
+            accent-color: #7EC8E0;
+        }
+        .main-badge-modern {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: linear-gradient(135deg, #F1A3B6, #E88DA5);
+            color: white;
+            font-size: 0.65rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        /* Разделители с градиентом */
+        .form-divider {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #F1A3B6, #7EC8E0, #F1A3B6);
+            margin: 1.5rem 0;
+        }
+
+        /* Кнопки действий */
+        .form-actions-modern {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #FAD5DF;
+        }
+        .btn-cancel-modern {
+            background: white;
+            border: 2px solid #FAD5DF;
+            color: #E88DA5;
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-cancel-modern:hover {
+            border-color: #7EC8E0;
+            color: #7EC8E0;
+            transform: translateY(-2px);
+        }
+        .btn-submit-modern {
+            background: linear-gradient(135deg, #F1A3B6, #E88DA5);
+            border: none;
+            padding: 0.7rem 2rem;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-submit-modern:hover {
+            background: linear-gradient(135deg, #7EC8E0, #F1A3B6);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(126,200,224,0.3);
+        }
+
+        /* Заголовки секций */
+        .section-title {
+            font-size: 1.2rem;
+            color: #E88DA5;
+            margin: 1.5rem 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-title:first-of-type {
+            margin-top: 0;
+        }
+        .section-title span {
+            background: #FAD5DF;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #E88DA5;
+        }
+
+        /* Предупреждение об удалении */
+        .warning-banner {
+            background: #FFF3E0;
+            border-left: 4px solid #FF9800;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            color: #E65100;
+        }
+        .warning-banner:before {
+            content: "⚠️";
+            font-size: 1.2rem;
+        }
+        .btn-delete-modern {
+            background: white;
+            border: 2px solid #ff4444;
+            color: #ff4444;
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: auto;
+        }
+
+        .btn-delete-modern:hover {
+            background: #ff4444;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 68, 68, 0.3);
+        }
+
+        /* Адаптив */
+        @media (max-width: 768px) {
+            .form-two-columns {
+                grid-template-columns: 1fr;
+            }
+            .form-full-width {
+                grid-column: span 1;
+            }
+            .categories-modern {
+                grid-template-columns: 1fr;
+            }
+            .admin-card {
+                padding: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body class="admin-page">
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="admin-container">
+    <div class="admin-card">
+        <h1 class="admin-title">Редактирование товара</h1>
+        <p style="color: #999; margin-bottom: 1.5rem;">Измените информацию о товаре</p>
+
+        <div class="warning-banner">
+            При удалении изображений из списка ниже они будут удалены из базы данных.
+            Для замены просто добавьте новые ссылки.
+        </div>
+
+        <form th:action="@{/admin/products/update/{id}(id=${product.id})}"
+              method="post"
+              th:object="${product}">
+
+            <!-- Основные поля - двухколоночная сетка -->
+            <div class="form-two-columns">
+                <div class="form-full-width">
+                    <div class="form-group">
+                        <label>Название товара <span style="color: #E88DA5;">*</span></label>
+                        <input type="text" th:field="*{name}" placeholder="Например: Мягкая игрушка «Зайка»" required>
+                    </div>
+                </div>
+
+                <div class="form-full-width">
+                    <div class="form-group">
+                        <label>Описание</label>
+                        <textarea th:field="*{description}" placeholder="Подробное описание товара..." rows="4"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Цена <span style="color: #E88DA5;">*</span></label>
+                    <input type="number" step="0.01" min="0" th:field="*{price}" placeholder="0.00" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Размер тиража</label>
+                    <input type="number" min="0" th:field="*{editionSize}" placeholder="Количество в серии">
+                </div>
+
+                <div class="form-group">
+                    <label>Количество на складе</label>
+                    <input type="number" min="0" th:field="*{quantityInStock}" placeholder="Доступно для заказа">
+                </div>
+
+                <div class="checkbox-group-modern">
+                    <input type="checkbox" th:field="*{isActive}" id="isActive">
+                    <label for="isActive">Товар виден на витрине</label>
+                </div>
+            </div>
+
+            <hr class="form-divider">
+
+            <!-- Категории -->
+            <div class="section-title">
+                Категории <span>Выберите подходящие</span>
+            </div>
+            <div class="categories-modern">
+                <div th:each="option : ${categoryOptions}" class="category-item-modern">
+                    <input type="checkbox"
+                           name="categoryOptionIds"
+                           th:value="${option.id}"
+                           th:id="'cat_' + ${option.id}"
+                           th:checked="${product.categoryOptions != null && product.categoryOptions.contains(option)}">
+                    <label th:for="'cat_' + ${option.id}" th:text="${option.category.name + ' → ' + option.value}"></label>
+                </div>
+            </div>
+
+            <hr class="form-divider">
+
+            <!-- Скрытые поля для существующих изображений (передаем через data-атрибуты) -->
+            <div id="existingImagesData" style="display: none;"></div>
+
+            <!-- Добавьте скрытые поля для каждого изображения -->
+            <div id="hiddenImagesData" style="display: none;">
+                <div th:each="img : ${product.images}"
+                     th:data-image-id="${img.id}"
+                     th:data-image-url="${img.imageUrl}"
+                     class="hidden-image-data"></div>
+            </div>
+
+            <!-- Ссылки на изображения -->
+            <div class="section-title">
+                Ссылки на изображения <span>Внешние URL</span>
+            </div>
+            <div class="urls-modern">
+                <div id="urlContainer"></div>
+                <button type="button" class="btn-add-url" onclick="addUrlField()">+ Добавить ещё ссылку</button>
+            </div>
+
+            <hr class="form-divider">
+
+            <!-- Превью изображений -->
+            <div class="section-title">
+                Превью изображений <span>Выберите главное</span>
+            </div>
+            <div class="preview-modern-grid" id="previewContainer"></div>
+
+            <!-- Скрытые поля для удаляемых изображений -->
+            <input type="hidden" name="removedImageIds" id="removedImageIds">
+
+            <!-- Кнопки -->
+            <div class="form-actions-modern">
+                <button type="button" class="btn-delete-modern" onclick="confirmDelete()">Удалить товар</button>
+                <button type="button" class="btn-cancel-modern" onclick="history.back()">Отмена</button>
+                <button type="submit" class="btn-submit-modern">Сохранить изменения</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script>
+    // Функция для загрузки существующих изображений из HTML
+    function loadExistingImagesFromDOM() {
+        const hiddenDivs = document.querySelectorAll('#hiddenImagesData .hidden-image-data');
+        const images = [];
+
+        hiddenDivs.forEach(div => {
+            const imageId = div.getAttribute('data-image-id');
+            const imageUrl = div.getAttribute('data-image-url');
+            if (imageId && imageUrl) {
+                images.push({
+                    id: imageId,
+                    imageUrl: imageUrl
+                });
+            }
+        });
+
+        return images;
+    }
+
+    // Получаем данные из DOM
+    const existingImages = loadExistingImagesFromDOM();
+    const currentMainImageId = /*[[${product.mainImage}]]*/ null;
+
+    let urlCounter = 0;
+    let removedIds = [];
+    const previewContainer = document.getElementById("previewContainer");
+    const urlContainer = document.getElementById("urlContainer");
+    const removedImagesInput = document.getElementById("removedImageIds");
+
+    // Функция для обновления скрытого поля с удаляемыми ID
+    function updateRemovedIdsInput() {
+        removedImagesInput.value = removedIds.join(',');
+    }
+
+    // Функция добавления поля для URL
+    function addUrlField(existingUrl = null, imageId = null) {
+        const row = document.createElement("div");
+        row.className = "url-row-modern";
+        if (imageId) {
+            row.setAttribute('data-image-id', imageId);
+        }
+        row.innerHTML = `
+            <input type="text" name="imageUrls" placeholder="https://example.com/image.jpg" value="${escapeHtml(existingUrl || '')}" oninput="updatePreview()">
+            <button type="button" class="btn-remove-url" onclick="removeUrlField(this)">✕ Удалить</button>
+        `;
+        urlContainer.appendChild(row);
+        if (existingUrl) {
+            setTimeout(() => updatePreview(), 100);
+        }
+    }
+
+    // Функция удаления поля с URL
+    function removeUrlField(button) {
+        const row = button.closest('.url-row-modern');
+        const imageId = row.getAttribute('data-image-id');
+
+        // Если у поля есть ID существующего изображения - добавляем в список на удаление
+        if (imageId && imageId !== 'null' && imageId !== 'undefined') {
+            if (!removedIds.includes(imageId)) {
+                removedIds.push(imageId);
+                updateRemovedIdsInput();
+            }
+        }
+        row.remove();
+        updatePreview();
+    }
+
+    // Функция рендера превью
+    function renderImage(src, index, isMain = false, imageId = null) {
+        const card = document.createElement("div");
+        card.className = "preview-modern-card";
+        card.setAttribute("data-index", index);
+        if (imageId) {
+            card.setAttribute("data-image-id", imageId);
+        }
+        card.innerHTML = `
+            <img src="${escapeHtml(src)}" alt="preview" onerror="this.src='https://placehold.co/130x110?text=Error'">
+            <div class="preview-radio-modern">
+                <label>
+                    <input type="radio" name="mainImageIndex" value="${index}" ${isMain ? "checked" : ""} onchange="updateMainBadge()">
+                    ⭐ Главное
+                </label>
+            </div>
+        `;
+        previewContainer.appendChild(card);
+    }
+
+    // Функция экранирования HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Функция обновления бейджа главного изображения
+    function updateMainBadge() {
+        document.querySelectorAll('.main-badge-modern').forEach(b => b.remove());
+        const selected = document.querySelector('input[name="mainImageIndex"]:checked');
+        if (selected) {
+            const card = document.querySelector(`.preview-modern-card[data-index="${selected.value}"]`);
+            if (card && !card.querySelector('.main-badge-modern')) {
+                const badge = document.createElement('div');
+                badge.className = 'main-badge-modern';
+                badge.innerHTML = '⭐ Главное';
+                card.style.position = 'relative';
+                card.appendChild(badge);
+            }
+        }
+    }
+
+    // Функция обновления всех превью
+    function updatePreview() {
+        previewContainer.innerHTML = "";
+        let index = 0;
+
+        // Получаем все URL из полей ввода
+        const urlItems = [];
+        document.querySelectorAll("#urlContainer .url-row-modern").forEach(row => {
+            const input = row.querySelector('input[name="imageUrls"]');
+            const url = input?.value?.trim();
+            if (url && url !== "") {
+                const imageId = row.getAttribute('data-image-id');
+                urlItems.push({ url, imageId });
+            }
+        });
+
+        // Рендерим превью
+        let mainFound = false;
+        urlItems.forEach((item, idx) => {
+            // Проверяем, является ли это изображение главным
+            let isMain = false;
+            if (!mainFound) {
+                if (item.imageId && item.imageId === currentMainImageId) {
+                    isMain = true;
+                    mainFound = true;
+                } else if (!currentMainImageId && idx === 0 && !mainFound) {
+                    isMain = true;
+                    mainFound = true;
+                }
+            }
+            renderImage(item.url, idx, isMain, item.imageId);
+        });
+
+        // Если не нашли главное, но есть изображения - делаем первое главным
+        if (!mainFound && urlItems.length > 0) {
+            const firstRadio = document.querySelector('input[name="mainImageIndex"][value="0"]');
+            if (firstRadio && !firstRadio.checked) {
+                firstRadio.checked = true;
+                setTimeout(updateMainBadge, 50);
+            }
+        } else {
+            setTimeout(updateMainBadge, 50);
+        }
+    }
+
+    // Инициализация: загружаем существующие изображения
+    function initializeExistingImages() {
+        if (existingImages && Array.isArray(existingImages) && existingImages.length > 0) {
+            existingImages.forEach(img => {
+                if (img && img.imageUrl) {
+                    addUrlField(img.imageUrl, img.id);
+                }
+            });
+        } else {
+            // Если нет изображений - добавляем одно пустое поле
+            addUrlField();
+        }
+        // Обновляем превью после загрузки всех полей
+        setTimeout(updatePreview, 200);
+    }
+
+    // Инициализация
+    initializeExistingImages();
+
+    // Добавляем обработчик перед отправкой формы для синхронизации radio значений
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const selectedRadio = document.querySelector('input[name="mainImageIndex"]:checked');
+        if (!selectedRadio) {
+            const radios = document.querySelectorAll('input[name="mainImageIndex"]');
+            if (radios.length > 0 && radios[0]) {
+                radios[0].checked = true;
+            }
+        }
+    });
+</script>
+<!-- Модальное окно подтверждения удаления -->
+<div id="deleteModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Подтверждение удаления</h3>
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Вы действительно хотите удалить товар <strong th:text="${product.name}"></strong>?</p>
+            <p class="warning-text">⚠️ Это действие невозможно отменить. Все упоминания товара в заказах и корзинах так же будут удалены</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-cancel-modal" onclick="closeModal()">Отмена</button>
+            <form th:action="@{/admin/products/delete/{id}(id=${product.id})}" method="post" style="display: inline;">
+                <button type="submit" class="btn-confirm-delete">Да, удалить</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Стили для модального окна */
+    .modal {
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        animation: fadeIn 0.3s;
+    }
+
+    .modal-content {
+        background-color: white;
+        margin: 15% auto;
+        padding: 0;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        animation: slideDown 0.3s;
+    }
+
+    .modal-header {
+        padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+        border-bottom: 2px solid #FAD5DF;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h3 {
+        color: #ff4444;
+        margin: 0;
+    }
+
+    .modal-close {
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        color: #999;
+        transition: color 0.3s;
+    }
+
+    .modal-close:hover {
+        color: #ff4444;
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .modal-body p {
+        margin: 0 0 1rem 0;
+        color: #4A3B2C;
+    }
+
+    .warning-text {
+        color: #ff4444;
+        font-size: 0.9rem;
+        background: #FFF3F3;
+        padding: 0.75rem;
+        border-radius: 12px;
+        border-left: 4px solid #ff4444;
+    }
+
+    .modal-footer {
+        padding: 1rem 1.5rem 1.5rem 1.5rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        border-top: 1px solid #FAD5DF;
+    }
+
+    .btn-cancel-modal {
+        background: white;
+        border: 2px solid #FAD5DF;
+        color: #E88DA5;
+        padding: 0.6rem 1.5rem;
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel-modal:hover {
+        border-color: #7EC8E0;
+        color: #7EC8E0;
+    }
+
+    .btn-confirm-delete {
+        background: #ff4444;
+        border: none;
+        padding: 0.6rem 1.5rem;
+        border-radius: 30px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-confirm-delete:hover {
+        background: #cc0000;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 68, 68, 0.3);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideDown {
+        from {
+            transform: translateY(-50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+</style>
+
+<script>
+    // Функции для модального окна
+    function confirmDelete() {
+        document.getElementById('deleteModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    // Закрытие модального окна при клике вне его
+    window.onclick = function(event) {
+        const modal = document.getElementById('deleteModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+</script>
+</body>
+</html>

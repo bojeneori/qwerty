@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Success</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<!-- ВСТАВКА HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<h1>Заказ успешно оплачен</h1>
+
+<p>Ваш заказ обработан</p>
+
+<a href="/products">К витрине</a>
+<!-- ВСТАВКА FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

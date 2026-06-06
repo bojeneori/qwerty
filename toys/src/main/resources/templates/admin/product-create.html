@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание товара</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        /* Улучшенная админ-карточка */
+        .admin-card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            border: 1px solid #FAD5DF;
+            transition: all 0.3s ease;
+        }
+        .admin-card:hover {
+            box-shadow: 0 10px 30px rgba(241, 163, 182, 0.15);
+            border-color: #7EC8E0;
+        }
+
+        /* Двухколоночная сетка для формы */
+        .form-two-columns {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        .form-full-width {
+            grid-column: span 2;
+        }
+
+        /* Стилизованные поля ввода */
+        .admin-card input[type="text"],
+        .admin-card input[type="number"],
+        .admin-card textarea,
+        .admin-card select {
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            border: 2px solid #FAD5DF;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            background: white;
+            width: 100%;
+        }
+        .admin-card input:focus,
+        .admin-card textarea:focus,
+        .admin-card select:focus {
+            border-color: #7EC8E0;
+            box-shadow: 0 0 0 3px rgba(126,200,224,0.2);
+            outline: none;
+        }
+
+        /* Чекбокс-группа */
+        .checkbox-group-modern {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.8rem 0;
+        }
+        .checkbox-group-modern input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #7EC8E0;
+            cursor: pointer;
+        }
+        .checkbox-group-modern label {
+            cursor: pointer;
+            margin: 0;
+        }
+
+        /* Категории - стильные карточки */
+        .categories-modern {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            background: #FEF5F7;
+            padding: 1.25rem;
+            border-radius: 20px;
+            border: 1px solid #FAD5DF;
+        }
+        .category-item-modern {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: white;
+            border: 1px solid #FAD5DF;
+        }
+        .category-item-modern:hover {
+            border-color: #7EC8E0;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(126,200,224,0.1);
+        }
+        .category-item-modern input {
+            width: 18px;
+            height: 18px;
+            accent-color: #7EC8E0;
+            cursor: pointer;
+        }
+        .category-item-modern label {
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #4A3B2C;
+            flex: 1;
+        }
+        .category-badge {
+            background: #FAD5DF;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #E88DA5;
+        }
+
+        /* URL-строки */
+        .urls-modern {
+            background: #FEF5F7;
+            border-radius: 20px;
+            border: 1px solid #FAD5DF;
+            padding: 1.25rem;
+        }
+        .url-row-modern {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .url-row-modern input {
+            flex: 1;
+        }
+        .btn-add-url {
+            width: 100%;
+            margin-top: 0.75rem;
+            background: white;
+            border: 2px dashed #FAD5DF;
+            color: #E88DA5;
+            padding: 0.7rem;
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-add-url:hover {
+            border-color: #7EC8E0;
+            background: #FEF5F7;
+            transform: translateY(-2px);
+        }
+
+        /* Превью грид */
+        .preview-modern-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .preview-modern-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid #FAD5DF;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .preview-modern-card:hover {
+            border-color: #7EC8E0;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(241,163,182,0.15);
+        }
+        .preview-modern-card img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+        }
+        .preview-radio-modern {
+            padding: 0.6rem;
+            text-align: center;
+            background: #FEF5F7;
+            border-top: 1px solid #FAD5DF;
+        }
+        .preview-radio-modern label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: #E88DA5;
+            font-weight: 500;
+        }
+        .preview-radio-modern input {
+            width: 16px;
+            height: 16px;
+            accent-color: #7EC8E0;
+        }
+        .main-badge-modern {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: linear-gradient(135deg, #F1A3B6, #E88DA5);
+            color: white;
+            font-size: 0.65rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        /* Разделители с градиентом */
+        .form-divider {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #F1A3B6, #7EC8E0, #F1A3B6);
+            margin: 1.5rem 0;
+        }
+
+        /* Кнопки действий */
+        .form-actions-modern {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #FAD5DF;
+        }
+        .btn-cancel-modern {
+            background: white;
+            border: 2px solid #FAD5DF;
+            color: #E88DA5;
+            padding: 0.7rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-cancel-modern:hover {
+            border-color: #7EC8E0;
+            color: #7EC8E0;
+            transform: translateY(-2px);
+        }
+        .btn-submit-modern {
+            background: linear-gradient(135deg, #F1A3B6, #E88DA5);
+            border: none;
+            padding: 0.7rem 2rem;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-submit-modern:hover {
+            background: linear-gradient(135deg, #7EC8E0, #F1A3B6);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(126,200,224,0.3);
+        }
+
+        /* Заголовки секций */
+        .section-title {
+            font-size: 1.2rem;
+            color: #E88DA5;
+            margin: 1.5rem 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-title:first-of-type {
+            margin-top: 0;
+        }
+        .section-title span {
+            background: #FAD5DF;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #E88DA5;
+        }
+
+        /* Адаптив */
+        @media (max-width: 768px) {
+            .form-two-columns {
+                grid-template-columns: 1fr;
+            }
+            .form-full-width {
+                grid-column: span 1;
+            }
+            .categories-modern {
+                grid-template-columns: 1fr;
+            }
+            .admin-card {
+                padding: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body class="admin-page">
+
+<!-- ВСТАВКА HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+
+<div class="admin-container">
+
+    <div class="admin-card">
+        <h1 class="admin-title">Добавление товара</h1>
+        <p style="color: #999; margin-bottom: 1.5rem;">Заполните информацию о новом товаре</p>
+
+        <form th:action="@{/admin/products/create}"
+              method="post"
+              th:object="${product}">
+
+            <!-- Основные поля - двухколоночная сетка -->
+            <div class="form-two-columns">
+                <div class="form-full-width">
+                    <div class="form-group">
+                        <label>Название товара <span style="color: #E88DA5;">*</span></label>
+                        <input type="text" th:field="*{name}" placeholder="Например: Мягкая игрушка «Зайка»" required>
+                    </div>
+                </div>
+
+                <div class="form-full-width">
+                    <div class="form-group">
+                        <label>Описание</label>
+                        <textarea th:field="*{description}" placeholder="Подробное описание товара..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Цена <span style="color: #E88DA5;">*</span></label>
+                    <input type="number" step="0.01" min="0" th:field="*{price}" placeholder="0.00" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Размер тиража</label>
+                    <input type="number" min="0" th:field="*{editionSize}" placeholder="Количество в серии">
+                </div>
+
+                <div class="form-group">
+                    <label>Количество на складе</label>
+                    <input type="number" min="0" th:field="*{quantityInStock}" placeholder="Доступно для заказа">
+                </div>
+
+                <div class="checkbox-group-modern">
+                    <input type="checkbox" th:field="*{isActive}" id="isActive">
+                    <label for="isActive">Товар виден на витрине</label>
+                </div>
+            </div>
+
+            <hr class="form-divider">
+
+            <!-- Категории -->
+            <div class="section-title">
+                Категории <span>Выберите подходящие</span>
+            </div>
+            <div class="categories-modern">
+                <div th:each="option : ${categoryOptions}" class="category-item-modern">
+                    <input type="checkbox" name="categoryOptionIds" th:value="${option.id}" th:id="'cat_' + ${option.id}">
+                    <label th:for="'cat_' + ${option.id}" th:text="${option.category.name + ' → ' + option.value}"></label>
+                </div>
+            </div>
+
+            <hr class="form-divider">
+
+            <!-- Ссылки на изображения -->
+            <div class="section-title">
+                Ссылки на изображения <span>Внешние URL</span>
+            </div>
+            <div class="urls-modern">
+                <div id="urlContainer">
+                    <div class="url-row-modern">
+                        <input type="text" name="imageUrls" placeholder="https://example.com/image.jpg" oninput="updatePreview()">
+                    </div>
+                </div>
+                <button type="button" class="btn-add-url" onclick="addUrlField()">+ Добавить ещё ссылку</button>
+            </div>
+
+            <hr class="form-divider">
+
+            <!-- Превью изображений -->
+            <div class="section-title">
+                Превью изображений <span>Выберите главное</span>
+            </div>
+            <div class="preview-modern-grid" id="previewContainer"></div>
+
+            <!-- Кнопки -->
+            <div class="form-actions-modern">
+                <button type="button" class="btn-cancel-modern" onclick="history.back()">Отмена</button>
+                <button type="submit" class="btn-submit-modern">Добавить</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- ВСТАВКА FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+
+<script>
+    const previewContainer = document.getElementById("previewContainer");
+
+    function addUrlField() {
+        const container = document.getElementById("urlContainer");
+        const row = document.createElement("div");
+        row.className = "url-row-modern";
+        row.innerHTML = `<input type="text" name="imageUrls" placeholder="https://example.com/image.jpg" oninput="updatePreview()">`;
+        container.appendChild(row);
+    }
+
+    function renderImage(src, index) {
+        const card = document.createElement("div");
+        card.className = "preview-modern-card";
+        card.setAttribute("data-index", index);
+        card.innerHTML = `
+            <img src="${src}" alt="preview" onerror="this.src='https://placehold.co/130x110?text=Error'">
+            <div class="preview-radio-modern">
+                <label>
+                    <input type="radio" name="mainImageIndex" value="${index}" ${index === 0 ? "checked" : ""} onchange="updateMainBadge()">
+                    ⭐ Главное
+                </label>
+            </div>
+        `;
+        previewContainer.appendChild(card);
+    }
+
+    function updateMainBadge() {
+        document.querySelectorAll('.main-badge-modern').forEach(b => b.remove());
+        const selected = document.querySelector('input[name="mainImageIndex"]:checked');
+        if (selected) {
+            const card = document.querySelector(`.preview-modern-card[data-index="${selected.value}"]`);
+            if (card && !card.querySelector('.main-badge-modern')) {
+                const badge = document.createElement('div');
+                badge.className = 'main-badge-modern';
+                badge.innerHTML = '⭐ Главное';
+                card.style.position = 'relative';
+                card.appendChild(badge);
+            }
+        }
+    }
+
+    function updatePreview() {
+        previewContainer.innerHTML = "";
+        let index = 0;
+
+        document.querySelectorAll("input[name='imageUrls']").forEach(input => {
+            const url = input.value?.trim();
+            if (url && url !== "") {
+                renderImage(url, index++);
+            }
+        });
+
+        setTimeout(updateMainBadge, 100);
+    }
+
+    // Инициализация превью при загрузке страницы
+    setTimeout(updatePreview, 100);
+</script>
+
+</body>
+</html>

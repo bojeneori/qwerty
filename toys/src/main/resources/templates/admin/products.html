@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление товарами</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        /* Дополнительные стили для админской страницы товаров */
+        .admin-products-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .admin-header h1 {
+            margin-bottom: 0;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 2px solid #FAD5DF;
+            color: #E88DA5;
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: #7EC8E0;
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #F1A3B6, #E88DA5);
+            color: white;
+            border-color: transparent;
+        }
+
+        .search-box {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            position: relative;
+        }
+
+        .product-card.inactive {
+            opacity: 0.7;
+            background-color: #f8f9fa;
+            position: relative;
+        }
+
+        .status-badge-overlay {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            z-index: 10;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .status-badge-overlay.active {
+            background: linear-gradient(135deg, #7EC8E0, #5FB0CC);
+            color: white;
+        }
+
+        .status-badge-overlay.inactive {
+            background: linear-gradient(135deg, #F1A3B6, #E88DA5);
+            color: white;
+        }
+
+        .admin-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .admin-actions a, .admin-actions button {
+            flex: 1;
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+        }
+
+        .btn-toggle-admin {
+            background: white;
+            border: 2px solid #FAD5DF;
+            color: #E88DA5;
+        }
+
+        .btn-toggle-admin:hover {
+            background: #7EC8E0;
+            color: white;
+            border-color: #7EC8E0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 20px;
+            border: 1px solid #FAD5DF;
+            color: #999;
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 1200px) {
+            .products {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .products {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #F1A3B6, #E88DA5);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            box-shadow: 0 5px 20px rgba(241, 163, 182, 0.3);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            font-weight: 600;
+        }
+
+        .toast-notification.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="admin-page">
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="admin-products-container">
+
+    <div class="admin-header">
+        <h1>Управление товарами</h1>
+        <a href="/admin/products/create" class="button" style="text-decoration: none;">
+            Добавить товар
+        </a>
+    </div>
+
+    <div class="filter-buttons">
+        <button type="button" class="filter-btn active" data-filter="all">Все товары</button>
+        <button type="button" class="filter-btn" data-filter="active">Активные</button>
+        <button type="button" class="filter-btn" data-filter="inactive">Скрытые</button>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Поиск товаров по названию...">
+    </div>
+
+    <main class="products" id="productsGrid">
+        <div th:each="product : ${products}"
+             class="product-card"
+             th:classappend="${!product.isActive} ? 'inactive' : ''"
+             data-product-name="${product.name.toLowerCase()}"
+             data-product-active="${product.isActive}">
+
+            <a th:href="@{/admin/products/edit/{id}(id=${product.id})}" class="product-link">
+                <!-- ИСПРАВЛЕНО: используем полный URL -->
+                <img th:src="${product.mainImageUrl}"
+                     th:alt="${product.name}"
+                     onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'">
+            </a>
+
+            <div th:if="${product.isActive}" class="status-badge-overlay active">
+                Активен
+            </div>
+            <div th:unless="${product.isActive}" class="status-badge-overlay inactive">
+                Скрыт
+            </div>
+
+            <h3 th:text="${product.name}"></h3>
+            <p th:text="${product.price} + ' ₽'"></p>
+            <p>Осталось: <span th:text="${product.quantityInStock}"></span></p>
+
+            <div th:if="${product.editionSize != null}" class="edition-size">
+                Тираж: <span th:text="${product.editionSize}"></span>
+            </div>
+
+            <div class="out-stock-badge" th:if="${product.quantityInStock == 0}">
+                Нет в наличии
+            </div>
+
+            <div class="admin-actions">
+                <a th:href="@{/admin/products/edit/{id}(id=${product.id})}" class="button" style="background: #7EC8E0;">
+                    Редактировать
+                </a>
+                <form th:action="@{/admin/products/toggle-active/{id}(id=${product.id})}"
+                      method="post" style="display: inline-block; flex: 1;">
+                    <button type="submit" class="btn-toggle-admin"
+                            th:data-product-name="${product.name}"
+                            onclick="return confirmToggle(this.getAttribute('data-product-name'))">
+                        <span th:if="${product.isActive}">Скрыть</span>
+                        <span th:unless="${product.isActive}">Показать</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="emptyState" class="empty-state" style="display: none;">
+        <h3>Товары не найдены</h3>
+        <p>Попробуйте изменить параметры поиска или добавьте новый товар</p>
+        <a href="/admin/products/create" class="button" style="display: inline-block; margin-top: 1rem;">Добавить товар</a>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const searchInput = document.getElementById('searchInput');
+    const productsGrid = document.getElementById('productsGrid');
+    const emptyState = document.getElementById('emptyState');
+    let currentFilter = 'all';
+
+    function filterProducts() {
+        const products = document.querySelectorAll('.product-card');
+        const searchTerm = searchInput.value.toLowerCase();
+        let visibleCount = 0;
+
+        products.forEach(product => {
+            const productName = product.dataset.productName;
+            const isActive = product.dataset.productActive === 'true';
+
+            let matchesFilter = false;
+            if (currentFilter === 'all') matchesFilter = true;
+            else if (currentFilter === 'active') matchesFilter = isActive;
+            else if (currentFilter === 'inactive') matchesFilter = !isActive;
+
+            const matchesSearch = productName.includes(searchTerm);
+
+            if (matchesFilter && matchesSearch) {
+                product.style.display = '';
+                visibleCount++;
+            } else {
+                product.style.display = 'none';
+            }
+        });
+
+        if (visibleCount === 0) {
+            productsGrid.style.display = 'none';
+            emptyState.style.display = 'block';
+        } else {
+            productsGrid.style.display = 'grid';
+            emptyState.style.display = 'none';
+        }
+    }
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter;
+            filterProducts();
+        });
+    });
+
+    searchInput.addEventListener('input', filterProducts);
+
+    function confirmToggle(productName) {
+        return confirm(`Вы уверены, что хотите изменить статус товара "${productName}"?`);
+    }
+
+    filterProducts();
+</script>
+
+</body>
+</html>

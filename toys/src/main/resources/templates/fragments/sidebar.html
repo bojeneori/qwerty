@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="sidebar" class="sidebar">
+
+    <h2>Администратор</h2>
+
+    <nav>
+
+        <a th:href="@{/admin}">
+            Панель
+        </a>
+
+        <a th:href="@{/admin/products}">
+            Товары
+        </a>
+
+        <a th:href="@{/admin/categories}">
+            Категории
+        </a>
+
+        <a th:href="@{/logout}">
+            Выйти
+        </a>
+
+    </nav>
+
+</div>
+
+</body>
+</html>

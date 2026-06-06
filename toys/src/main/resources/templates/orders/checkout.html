@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Checkout</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<h1>Подтвердите информацию о заказе</h1>
+
+<h2>Покупатель</h2>
+
+<p>Email: <span th:text="${user.email}"></span></p>
+
+<form th:action="@{/orders/checkout}" method="post">
+
+    <h3>Адрес доставки:</h3>
+
+    <label>Город:</label>
+    <input type="text" name="city" th:value="${user.defaultCity}" />
+
+    <br/>
+
+    <label>Почтовый индекс:</label>
+    <input type="text" name="postalCode" th:value="${user.defaultPostalCode}" />
+
+    <br/>
+
+    <label>Адрес:</label>
+    <input type="text" name="address" th:value="${user.defaultAddress}" />
+
+    <hr/>
+
+    <!-- ================= CART ITEMS ================= -->
+    <h2>Заказ:</h2>
+
+    <table border="1">
+        <tr>
+            <th>Товар</th>
+            <th>Цена</th>
+            <th>Количество</th>
+            <th>Сумма</th>
+        </tr>
+
+        <tr th:each="item : ${items}">
+            <td th:text="${item.product.name}"></td>
+
+            <td th:text="${item.product.price}"></td>
+
+            <td>1</td>
+
+            <td th:text="${item.product.price}"></td>
+        </tr>
+    </table>
+
+    <h3>
+        К оплате: <span th:text="${total}"></span>
+    </h3>
+
+    <hr/>
+
+    <!-- ================= SUBMIT ================= -->
+    <button type="submit">
+        Оплатить
+    </button>
+
+</form>
+
+<!-- BACK -->
+<br/>
+<a href="/cart">Обратно к корзине</a>
+
+</body>
+</html>

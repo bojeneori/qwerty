@@ -930,7 +930,157 @@ body:has(h1:contains("Заказ оформлен")) a:hover {
             .thumbnail-list {
                 grid-template-columns: repeat(3, 1fr);
             }
+        }
 
 .container.product-page {
     display: block;
+}
+
+/* =========================
+   ADMIN - CARD LAYOUT CLEAN
+========================= */
+
+body.admin-page {
+    background: linear-gradient(135deg, #FFF1F5, #F7FBFF);
+}
+
+/* центр страницы */
+.admin-container {
+    max-width: 1100px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+/* карточка формы */
+.admin-card {
+    background: white;
+    border-radius: 28px;
+    padding: 2rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    border: 1px solid #FAD5DF;
+}
+
+/* заголовок */
+.admin-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #E88DA5;
+}
+
+/* форма */
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+/* поля */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+/* label (НЕ глобально!) */
+.admin-card label {
+    font-weight: 600;
+    color: #E88DA5;
+    font-size: 0.9rem;
+}
+
+/* inputs только внутри админки */
+.admin-card input[type="text"],
+.admin-card input[type="number"],
+.admin-card textarea {
+    padding: 0.8rem 1rem;
+    border-radius: 16px;
+    border: 2px solid #FAD5DF;
+    transition: 0.25s;
+    font-size: 1rem;
+}
+
+.admin-card textarea {
+    min-height: 120px;
+}
+
+.admin-card input:focus,
+.admin-card textarea:focus {
+    border-color: #7EC8E0;
+    box-shadow: 0 0 0 3px rgba(126,200,224,0.2);
+    outline: none;
+}
+
+/* секции */
+.admin-card h2 {
+    margin-top: 1.5rem;
+    font-size: 1.2rem;
+    color: #E88DA5;
+}
+
+/* категории как grid карточки */
+#category-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+    background: #FFF8FB;
+    padding: 1rem;
+    border-radius: 18px;
+}
+
+/* checkbox */
+.admin-card input[type="checkbox"] {
+    accent-color: #7EC8E0;
+}
+
+/* url rows */
+.url-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* preview grid */
+.image-preview-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+}
+
+/* image card */
+.image-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 0.5rem;
+    border: 1px solid #FAD5DF;
+    transition: 0.2s;
+}
+
+.image-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    border-color: #7EC8E0;
+}
+
+.image-card img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* кнопка */
+.submit-btn {
+    margin-top: 1rem;
+    padding: 0.9rem 1.2rem;
+    border-radius: 16px;
+    border: none;
+    background: linear-gradient(135deg, #F1A3B6, #E88DA5);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #7EC8E0, #F1A3B6);
 }

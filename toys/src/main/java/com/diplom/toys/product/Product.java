@@ -4,6 +4,7 @@ import com.diplom.toys.category.CategoryOption;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,8 +37,8 @@ public class Product {
     @Column(name = "is_active")
     private Boolean isActive;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<ProductImage> images;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ProductImage> images = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -48,9 +49,18 @@ public class Product {
     private List<CategoryOption> categoryOptions;
 
     public String getMainImageUrl() {
-        if (images != null && !images.isEmpty()) {
+        if (images == null || images.isEmpty()) {
+            return "default.jpg";
+        }
+
+        if (mainImage == null) {
             return images.get(0).getImageUrl();
         }
-        return "default.jpg";
+
+        return images.stream()
+                .filter(img -> img.getId().equals(mainImage))
+                .map(ProductImage::getImageUrl)
+                .findFirst()
+                .orElse(images.get(0).getImageUrl());
     }
 }

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование категории</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .admin-card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 2rem auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            border: 1px solid #FAD5DF;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #4A3B2C;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #FAD5DF;
+            border-radius: 16px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            border-color: #7EC8E0;
+            outline: none;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .warning-banner {
+            background: #FFF3E0;
+            border-left: 4px solid #FF9800;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: #E65100;
+        }
+    </style>
+</head>
+<body class="admin-page">
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="admin-card">
+    <h1>Редактирование категории</h1>
+
+    <div class="warning-banner">
+        ⚠️ Изменение названия категории не повлияет на уже назначенные опции товаров.
+    </div>
+
+    <form th:action="@{/admin/categories/update/{id}(id=${category.id})}" method="post" th:object="${category}">
+        <div class="form-group">
+            <label>Название категории <span style="color: #E88DA5;">*</span></label>
+            <input type="text" th:field="*{name}" required>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn-cancel-modern" onclick="history.back()">Отмена</button>
+            <button type="submit" class="btn-submit-modern">Сохранить</button>
+        </div>
+    </form>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

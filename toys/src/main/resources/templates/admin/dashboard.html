@@ -5,6 +5,38 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-fufufufu
+
+<!-- ВСТАВКА HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+
+<div class="content-card">
+    <h3>Добро пожаловать, администратор! Быстрые ссылки:</h3>
+    <ul class="item-list">
+        <li>
+            <a href="/admin/products/create" style="color: #E88DA5; text-decoration: none;">
+                Создать новый товар
+            </a>
+        </li>
+        <li>
+            <a href="/admin/products" style="color: #E88DA5; text-decoration: none;">
+                Редактировать товары
+            </a>
+        </li>
+        <li>
+            <a href="/admin/categories" style="color: #E88DA5; text-decoration: none;">
+                Управление категориями
+            </a>
+        </li>
+        <li>
+            <a href="/products" style="color: #E88DA5; text-decoration: none;">
+                Перейти в магазин
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- ВСТАВКА FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
 </body>
 </html>

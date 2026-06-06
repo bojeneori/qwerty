@@ -54,7 +54,7 @@
     <div th:unless="${groupedItems.isEmpty()}">
         <strong>Итого: <span th:text="${total}">0</span> ₽</strong>
 
-        <form th:action="@{/order/checkout}" method="post" style="margin-top: 20px;">
+        <form th:action="@{/orders/checkout}" method="post" style="margin-top: 20px;">
             <button type="submit">Оформить заказ</button>
         </form>
     </div>

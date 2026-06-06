@@ -28,6 +28,7 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
+    private final PaymentService paymentService;
 
     @Transactional
     public Order createOrder(UUID userId) {
@@ -80,5 +81,19 @@ public class OrderService {
         cartItemRepository.deleteAll(cartItems);
 
         return order;
+    }
+
+    public boolean payForOrder(UUID orderId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Заказ не найден"));
+
+        boolean paid = paymentService.pay(orderId, order.getPrice());
+
+        if (!paid) {
+            throw new RuntimeException("Оплата не прошла");
+        }
+
+        return true;
     }
 }

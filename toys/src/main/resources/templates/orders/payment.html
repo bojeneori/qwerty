@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Payment</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<!-- ВСТАВКА HEADER -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<h2>Оплата</h2>
+
+<p>Order ID:</p>
+<p th:text="${orderId}"></p>
+
+<form th:action="@{'/orders/pay/' + ${orderId}}" method="post">
+    <button type="submit">Оплатить</button>
+</form>
+
+<!-- ВСТАВКА FOOTER -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
