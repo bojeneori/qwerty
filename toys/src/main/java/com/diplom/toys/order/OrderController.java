@@ -2,6 +2,7 @@ package com.diplom.toys.order;
 
 import com.diplom.toys.cart.CartItem;
 import com.diplom.toys.cart.CartService;
+import com.diplom.toys.product.Product;
 import com.diplom.toys.user.User;
 import com.diplom.toys.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -70,11 +71,12 @@ public class OrderController {
     }
 
     @GetMapping("/pay/{orderId}")
-    public String payPage(@PathVariable UUID orderId, Model model) {
+    public String payPage(@PathVariable UUID orderId,
+                          Model model) {
 
         model.addAttribute("orderId", orderId);
 
-        return "payment";
+        return "orders/payment";
     }
 
     @PostMapping("/pay/{orderId}")
